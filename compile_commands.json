@@ -1,0 +1,32 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-I",
+      "/home/eirik/personal/repos/rpg_test/",
+      "-o",
+      "rpg",
+      "main.cpp"
+    ],
+    "directory": "/home/eirik/personal/repos/rpg_test",
+    "file": "/home/eirik/personal/repos/rpg_test/main.cpp",
+    "output": "/home/eirik/personal/repos/rpg_test/rpg"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-I",
+      "/home/eirik/personal/repos/rpg_test/",
+      "-o",
+      "rpg",
+      "systems/loading/initialize.cpp"
+    ],
+    "directory": "/home/eirik/personal/repos/rpg_test",
+    "file": "/home/eirik/personal/repos/rpg_test/systems/loading/initialize.cpp",
+    "output": "/home/eirik/personal/repos/rpg_test/rpg"
+  }
+]
