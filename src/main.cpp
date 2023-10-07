@@ -1,6 +1,8 @@
 #include <iostream>
+#include "ftxui/component/component.hpp"
 #include <entt/entt.hpp>
 #include <ncurses.h>
+
 
 #include <string>
 #include <chrono>
