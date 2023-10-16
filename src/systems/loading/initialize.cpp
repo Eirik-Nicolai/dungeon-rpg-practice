@@ -1,6 +1,6 @@
 #include "initialize.hpp"
 
-void on_init(entt::registry &reg)
+void on_init(entt::registry &reg, entt::entity &playerent)
 {
     auto mainscreen = reg.create();
 //    reg.emplace<window>(mainscreen, MAINWINDOW, 800-2, 600-2, 2, 2);
@@ -12,27 +12,26 @@ void on_init(entt::registry &reg)
 
 
     auto player = reg.create();
-    reg.emplace<movespeed>(player, 0.9);
+    reg.emplace<movespeed>(player, 1.0f);
     reg.emplace<_renderable>(player);
     reg.emplace<pos>(player, 20, 40);
     reg.emplace<simpleappearence>(player, "#");
-    reg.emplace<directionNorth>(player);
-    reg.emplace<directionSouth>(player);
-    reg.emplace<directionWest>(player);
-    reg.emplace<directionEast>(player);
+    reg.emplace<dirVertical>(player);
+    reg.emplace<dirHorisontal>(player);
+    reg.emplace<moveTick>(player, 0.0f);
     reg.emplace<_player>(player);
 
+    playerent = player;
 
 
     auto goblin = reg.create();
-    reg.emplace<movespeed>(goblin, 0.9);
+    reg.emplace<movespeed>(goblin, 0.6f);
     reg.emplace<_renderable>(goblin);
-    reg.emplace<pos>(goblin, 30, 30);
+    reg.emplace<pos>(goblin, 200, 400);
     reg.emplace<simpleappearence>(goblin, "v");
-    reg.emplace<directionNorth>(goblin);
-    reg.emplace<directionSouth>(goblin);
-    reg.emplace<directionWest>(goblin);
-    reg.emplace<directionEast>(goblin);
+    reg.emplace<dirVertical>(goblin);
+    reg.emplace<dirHorisontal>(goblin);
+    reg.emplace<moveTick>(goblin, 0.0f);
     reg.emplace<_ai>(goblin);
     reg.emplace<_follow_player>(goblin);
 }

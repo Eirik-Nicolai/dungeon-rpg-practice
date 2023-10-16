@@ -9,6 +9,6 @@
 #include "components/rendering.hpp"
 
 
-void on_init(entt::registry &);
+void on_init(entt::registry &, entt::entity &);
 
 #endif // INITIALIZE_H_

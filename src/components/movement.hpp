@@ -10,25 +10,15 @@ struct pos{
     int y;
 };
 
-struct directionNorth
+struct dirVertical
 {
-    float tick = 0;
-    float vel = 0;
+    bool up;
+    bool down;
 };
-struct directionSouth
+struct dirHorisontal
 {
-    float tick = 0;
-    float vel = 0;
-};
-struct directionEast
-{
-    float tick = 0;
-    float  vel = 0;
-};
-struct directionWest
-{
-    float tick = 0;
-    float  vel = 0;
+    bool left;
+    bool right;
 };
 
 #endif // MOVEMENT_H_

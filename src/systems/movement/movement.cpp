@@ -3,64 +3,39 @@
 
 void on_move(entt::registry &reg)
 {
-    auto north_view = reg.view<movespeed, directionNorth>();
-    auto south_view = reg.view<movespeed, directionSouth>();
-    auto west_view =  reg.view<movespeed, directionWest>();
-    auto east_view =  reg.view<movespeed, directionEast>();
+    auto dir_tick = reg.view<const movespeed, const dirVertical, const dirHorisontal, moveTick>();
 
-    for (auto [ent, speed, dir]: north_view.each())
+    for (auto [ent, speed, dirV, dirH, tick]: dir_tick.each())
     {
-        if(dir.tick >= 1.0)
+        if(dirV.up || dirV.down || dirH.left || dirH.right)
         {
-            auto p = reg.get<pos>(ent);
-            reg.replace<pos>(ent, p.x, p.y-1);
-            dir.tick = dir.tick-1;
-        }
-        else if (dir.vel > 0)
-        {
-            dir.tick += speed.speed;
+            tick.tick += 0.15;
         }
     }
 
-    for (auto [ent, speed, dir]: south_view.each())
+    auto movement = reg.view<const movespeed, const dirVertical, const dirHorisontal, moveTick, pos>();
+    for (auto [ent, speed, dirV, dirH, tick, p]: movement.each())
     {
-        if(dir.tick >= 1.0)
+        if(tick.tick >= speed.speed)
         {
-            auto p = reg.get<pos>(ent);
-            reg.replace<pos>(ent, p.x, p.y+1);
-            dir.tick = dir.tick-1;
-        }
-        else if (dir.vel > 0)
-        {
-            dir.tick += speed.speed;
-        }
-    }
-
-    for (auto [ent, speed, dir]: west_view.each())
-    {
-        if(dir.tick >= 1.0)
-        {
-            auto p = reg.get<pos>(ent);
-            reg.replace<pos>(ent, p.x-1, p.y);
-            dir.tick = dir.tick-1;
-        }
-        else if (dir.vel > 0)
-        {
-            dir.tick += speed.speed;
-        }
-    }
-
-    for (auto [ent, speed, dir]: east_view.each())
-    {
-        if(dir.tick >= 1.0)
-        {
-            auto p = reg.get<pos>(ent);
-            reg.replace<pos>(ent, p.x+1, p.y);
-            dir.tick = dir.tick-1;
-        }
-        else if (dir.vel > 0)
-        {
-            dir.tick += speed.speed;
+            auto &p = reg.get<pos>(ent);
+            if(dirV.up)
+            {
+                p.y -= 10;
+            }
+            if(dirV.down)
+            {
+                p.y += 10;
+            }
+            if(dirH.left)
+            {
+                p.x -= 10;
+            }
+            if(dirH.right)
+            {
+                p.x += 10;
+            }
+            tick.tick = 0;
         }
     }
 }

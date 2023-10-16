@@ -5,6 +5,10 @@
 #include <entt/entt.hpp>
 
 #include "systems/loading/initialize.hpp"
+#include "systems/movement/movement.hpp"
+#include "systems/AI/ai.hpp"
+
+#define BORDER_OFFS 10
 
 enum class state{WALKING, COMBAT, DIALOGUE, CUTSCENE, PAUSED, STARTMENU, TRANSITION, NONE};
 
@@ -19,7 +23,7 @@ class DungeonThing : public olc::PixelGameEngine
 
     private: //states
         void on_render_walking();
-        void on_render_menu();
+        void on_render_paused();
         void on_render_combat();
 
         void on_userinput_walking();
@@ -32,6 +36,10 @@ class DungeonThing : public olc::PixelGameEngine
 
         state CURR_STATE;
         state NEXT_STATE;
+
+        float m_fElapsedTimeSinceTick;
+
+        entt::entity m_player;
 };
 
 

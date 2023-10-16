@@ -4,92 +4,46 @@
 
 void DungeonThing::on_userinput_walking()
 {
-        //Debug::Log(std::to_string(ISPRESSED_NORTH), 0, 0);
-
         if (GetKey(olc::Key::W).bHeld)
         {
-                //ISPRESSED_NORTH = true;
+                m_reg.get<dirVertical>(m_player).up = true;
         }
-        if (GetKey(olc::Key::D).bHeld)
+        if (GetKey(olc::Key::W).bReleased)
         {
-                //ISPRESSED_SOUTH = true;
+                m_reg.get<dirVertical>(m_player).up = false;
         }
+
+        if (GetKey(olc::Key::S).bHeld)
+        {
+                m_reg.get<dirVertical>(m_player).down = true;
+        }
+        if (GetKey(olc::Key::S).bReleased)
+        {
+                m_reg.get<dirVertical>(m_player).down = false;
+        }
+
         if (GetKey(olc::Key::A).bHeld)
         {
-                //ISPRESSED_WEST = true;
+                m_reg.get<dirHorisontal>(m_player).left = true;
         }
+        if (GetKey(olc::Key::A).bReleased)
+        {
+                m_reg.get<dirHorisontal>(m_player).left = false;
+        }
+
         if (GetKey(olc::Key::D).bHeld)
         {
-                //ISPRESSED_EAST = true;
+                m_reg.get<dirHorisontal>(m_player).right = true;
         }
+        if (GetKey(olc::Key::D).bReleased)
+        {
+                m_reg.get<dirHorisontal>(m_player).right = false;
+        }
+
 
         // OPEN INVENTORY / PAUSE GAME
-        if (GetKey(olc::Key::X).bHeld)
+        if (GetKey(olc::Key::I).bReleased)
         {
-                NEXT_STATE = state::PAUSED;
+                NEXT_STATE = state::COMBAT;
         }
-
-
-        // if(ISPRESSED_NORTH)
-        // {
-        //         ISPRESSED_NORTH = false;
-        //         if(press_offset_n==0)press_offset_n += 3;
-        //         else press_offset_n += 1;
-        // }
-        // if(ISPRESSED_SOUTH)
-        // {
-        //         ISPRESSED_SOUTH = false;
-        //         if(press_offset_s==0)press_offset_s += 3;
-        //         else press_offset_s += 1;
-        // }
-        // if(ISPRESSED_WEST)
-        // {
-        //         ISPRESSED_WEST = false;
-        //         if(press_offset_w==0)press_offset_w += 3;
-        //         else press_offset_w += 1;
-        // }
-        // if(ISPRESSED_EAST)
-        // {
-        //         ISPRESSED_EAST = false;
-        //         if(press_offset_e==0)press_offset_e += 3;
-        //         else press_offset_e += 1;
-        // }
-
-        // auto playerent = (*reg.view<_player>().begin());
-        // if(press_offset_n > 0)
-        // {
-        //         --press_offset_n;
-        //         reg.get<directionNorth>(playerent).vel = 1;
-        // }
-        // else
-        // {
-        //         reg.get<directionNorth>(playerent).vel = 0;
-        // }
-        // if(press_offset_s > 0)
-        // {
-        //         --press_offset_s;
-        //         reg.get<directionSouth>(playerent).vel = 1;
-        // }
-        // else
-        // {
-        //         reg.get<directionSouth>(playerent).vel = 0;
-        // }
-        // if(press_offset_w > 0)
-        // {
-        //         --press_offset_w;
-        //         reg.get<directionWest>(playerent).vel = 1;
-        // }
-        // else
-        // {
-        //         reg.get<directionWest>(playerent).vel = 0;
-        // }
-        // if(press_offset_e > 0)
-        // {
-        //         --press_offset_e;
-        //         reg.get<directionEast>(playerent).vel = 1;
-        // }
-        // else
-        // {
-        //         reg.get<directionEast>(playerent).vel = 0;
-        // }
 }

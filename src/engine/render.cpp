@@ -3,16 +3,56 @@
 
 void DungeonThing::on_render_walking()
 {
-    DrawLine(10, 10, 790, 10);     // top line
-    DrawLine(10, 440, 790, 440); // bottom line
-    DrawLine(10, 10, 10, 440);     // left line
-    DrawLine(790, 10, 790, 440); // right line
+    auto [winx, winy] = GetScreenSize();
+    DrawLine(BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
+    DrawLine(BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
+    DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy-BORDER_OFFS);     // left line
+    DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
 
     auto renderview = m_reg.view<_renderable, pos, simpleappearence>();
     for( auto [ent, p, app]: renderview.each() )
     {
         DrawString(p.x, p.y, app.c);
     }
+}
+
+void DungeonThing::on_render_combat()
+{
+    auto [winx, winy] = GetScreenSize();
+
+    auto winy_main = winy * 0.70;
+
+    DrawLine(BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
+    DrawLine(BORDER_OFFS, winy_main-BORDER_OFFS, winx-BORDER_OFFS, winy_main-BORDER_OFFS); // bottom line
+    DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy_main-BORDER_OFFS);     // left line
+    DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy_main-BORDER_OFFS); // right line
+
+    DrawLine(BORDER_OFFS, winy_main, winx-BORDER_OFFS, winy_main);     // top line
+    DrawLine(BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
+    DrawLine(BORDER_OFFS, winy_main, BORDER_OFFS, winy-BORDER_OFFS);     // left line
+    DrawLine(winx-BORDER_OFFS, winy_main, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
+
+
+}
+
+
+void DungeonThing::on_render_paused()
+{
+    auto [winx, winy] = GetScreenSize();
+
+    auto winx_main = winx * 0.65;
+
+    DrawLine(BORDER_OFFS, BORDER_OFFS, winx_main-BORDER_OFFS, BORDER_OFFS);     // top line
+    DrawLine(BORDER_OFFS, winy-BORDER_OFFS, winx_main-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
+    DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy-BORDER_OFFS);     // left line
+    DrawLine(winx_main-BORDER_OFFS, BORDER_OFFS, winx_main-BORDER_OFFS, winy-BORDER_OFFS); // right line
+
+    auto winx_pause = winx - winx_main;
+
+    DrawLine(winx_main + BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
+    DrawLine(winx_main + BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
+    DrawLine(winx_main + BORDER_OFFS, BORDER_OFFS, winx_main + BORDER_OFFS, winy-BORDER_OFFS);     // left line
+    DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
 }
 
 // void DungeonThing::on_render(entt::registry &reg)
