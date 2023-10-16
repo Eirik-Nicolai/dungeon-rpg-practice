@@ -4,7 +4,6 @@
 #include <entt/entt.hpp>
 
 #include "utils/debug.hpp"
-#include "utils/globals.hpp"
 
 #include "components/logic.hpp"
 

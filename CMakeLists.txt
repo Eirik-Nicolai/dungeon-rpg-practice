@@ -19,16 +19,15 @@ set(SRC_MAIN src/main.cpp)
 set(SRC_ENGINE
     src/engine/game.cpp
     src/engine/render.cpp
+    src/engine/keypress.cpp
 )
 
 set(SRC_UTILS
     src/utils/debug.cpp
-    src/utils/globals.cpp
 )
 
 set(SRC_SYSTEMS
     src/systems/AI/ai.cpp
-    src/systems/input/keypress.cpp
     src/systems/loading/initialize.cpp
     src/systems/logic/logic.cpp
     src/systems/movement/movement.cpp

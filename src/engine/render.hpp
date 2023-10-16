@@ -4,7 +4,6 @@
 #include <entt/entt.hpp>
 
 #include "utils/debug.hpp"
-#include "utils/globals.hpp"
 
 #include "components/logic.hpp"
 #include "components/movement.hpp"
@@ -13,7 +12,6 @@
 
 void on_render_menu(entt::registry &);
 void on_render_walking(entt::registry &);
-void on_render(entt::registry &);
 void on_render_transition(entt::registry &);
 
 #endif // RENDER_H_
