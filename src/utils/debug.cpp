@@ -1,13 +1,12 @@
 #include "debug.hpp"
 
 std::vector<debugLine> debug_lines;
-WINDOW * currwin;
 
 
-void Debug::Setup(WINDOW* win)
+void Debug::Setup()
 {
   debug_lines = std::vector<debugLine>();
-  currwin = win;
+
 }
 
 
@@ -20,6 +19,5 @@ void Debug::Print()
 {
   for(auto line: debug_lines)
   {
-      mvwprintw(currwin, line.y, line.x, "%s",line.s.c_str());
   }
 }

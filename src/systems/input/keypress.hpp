@@ -2,7 +2,6 @@
 #define KEYPRESS_H_
 
 #include <entt/entt.hpp>
-#include <ncurses.h>
 
 #include "utils/globals.hpp"
 #include "utils/debug.hpp"

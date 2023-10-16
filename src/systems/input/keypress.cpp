@@ -10,28 +10,28 @@ int press_offset_e = 0;
 void on_keypress(entt::registry &reg, int &ch)
 {
         // WALKING
-        if (ch == KEY_UP || ch == 'w')
-        {
-                ISPRESSED_NORTH = true;
-        }
-        if (ch == KEY_DOWN || ch == 's')
-        {
-                ISPRESSED_SOUTH = true;
-        }
-        if (ch == KEY_LEFT || ch == 'a')
-        {
-                ISPRESSED_WEST = true;
-        }
-        if (ch == KEY_RIGHT || ch == 'd')
-        {
-                ISPRESSED_EAST = true;
-        }
+        // if (ch == KEY_UP || ch == 'w')
+        // {
+        //         ISPRESSED_NORTH = true;
+        // }
+        // if (ch == KEY_DOWN || ch == 's')
+        // {
+        //         ISPRESSED_SOUTH = true;
+        // }
+        // if (ch == KEY_LEFT || ch == 'a')
+        // {
+        //         ISPRESSED_WEST = true;
+        // }
+        // if (ch == KEY_RIGHT || ch == 'd')
+        // {
+        //         ISPRESSED_EAST = true;
+        // }
 
-        // OPEN INVENTORY / PAUSE GAME
-        if (ch == 'i' || ch == 'z')
-        {
-                NEW_GAME_STATE = state::PAUSED;
-        }
+        // // OPEN INVENTORY / PAUSE GAME
+        // if (ch == 'i' || ch == 'z')
+        // {
+        //         NEW_GAME_STATE = state::PAUSED;
+        // }
 }
 
 void on_input_menu(entt::registry &reg)
