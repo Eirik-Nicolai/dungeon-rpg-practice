@@ -8,8 +8,8 @@
 #include "components/movement.hpp"
 
 
-void on_follow_player(entt::registry &, entt::entity &);
+void on_follow(entt::registry &);
 
-void on_ai(entt::registry &, entt::entity &);
+void on_ai(entt::registry &);
 
 #endif // AI_H_

@@ -14,5 +14,6 @@
 
 void on_gamestate_change(entt::registry &);
 void on_logic(entt::registry &);
+void on_collision(entt::registry &);
 
 #endif // LOGIC_H_

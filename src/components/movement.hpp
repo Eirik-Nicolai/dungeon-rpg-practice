@@ -10,6 +10,11 @@ struct pos{
     int y;
 };
 
+struct size{
+  int width;
+  int height;
+};
+
 struct dirVertical
 {
     bool up;

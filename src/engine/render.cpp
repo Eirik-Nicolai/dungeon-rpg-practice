@@ -1,4 +1,3 @@
-#include "game.hpp"
 #include "render.hpp"
 
 void DungeonThing::on_render_walking()
@@ -9,8 +8,20 @@ void DungeonThing::on_render_walking()
     DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy-BORDER_OFFS);     // left line
     DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
 
-    auto renderview = m_reg.view<_renderable, pos, simpleappearence>();
-    for( auto [ent, p, app]: renderview.each() )
+    auto walls = m_reg.view<_renderable, pos, size, _wall>();
+    for( auto [ent, p, s]: walls.each() )
+    {
+        for(int y = 0; y < s.height; y+=10)
+        {
+            for(int x = 0; x < s.width; x+=10)
+            {
+                DrawString(p.x+x, p.y+y, "H");
+            }
+        }
+    }
+
+    auto simple = m_reg.view<_renderable, pos, simpleappearence>();
+    for( auto [ent, p, app]: simple.each() )
     {
         DrawString(p.x, p.y, app.c);
     }
@@ -32,7 +43,37 @@ void DungeonThing::on_render_combat()
     DrawLine(BORDER_OFFS, winy_main, BORDER_OFFS, winy-BORDER_OFFS);     // left line
     DrawLine(winx-BORDER_OFFS, winy_main, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
 
+    auto winy_combat = winy - winy_main;
+     //FIXME move to init menu
+    int mid_menu_x[4];
+    mid_menu_x[0] = winx/3;
+    mid_menu_x[1] = winx/3;
+    mid_menu_x[2] = winx*2/3;
+    mid_menu_x[3] = winx*2/3;
 
+    int mid_menu_y = winy_main + winy_combat/2;
+
+    //debug line
+    // DrawLine(mid_menu_x[0], 0, mid_menu_x[0], winy);
+    // DrawLine(0, mid_menu_y, winx, mid_menu_y);
+
+    for(int i = 0; i < m_combatmenus[m_curr_menu].list_size; ++i)
+    {
+        DrawString(mid_menu_x[i] - GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text)/2,
+                   mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),
+                   m_combatmenus[m_curr_menu].list_items[i].text,
+                   olc::WHITE,
+                   2);
+        if(m_combatmenus[m_curr_menu].curr_selected == i)
+        {
+            DrawString(mid_menu_x[i] - (GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text)/2) - 3*8*2,
+                       mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),
+                       "-->",
+                       olc::WHITE,
+                       2);
+
+        }
+    }
 }
 
 
@@ -47,73 +88,79 @@ void DungeonThing::on_render_paused()
     DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy-BORDER_OFFS);     // left line
     DrawLine(winx_main-BORDER_OFFS, BORDER_OFFS, winx_main-BORDER_OFFS, winy-BORDER_OFFS); // right line
 
-    auto winx_pause = winx - winx_main;
-
     DrawLine(winx_main + BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
     DrawLine(winx_main + BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
     DrawLine(winx_main + BORDER_OFFS, BORDER_OFFS, winx_main + BORDER_OFFS, winy-BORDER_OFFS);     // left line
     DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
+
+    auto winx_pause = winx - winx_main;
+
+    //FIXME move to init menu
+    int mid_menu_x = winx_main + winx_pause/2;
+    int mid_menu_y = winy/2;
+
+    //debug line
+    // DrawLine(mid_menu_x, 0, mid_menu_x, winy);
+    // DrawLine(0, mid_menu_y, winx, mid_menu_y);
+
+    for(int i = 0; i < m_pausemenus[m_curr_menu].list_size; ++i)
+    {
+        DrawString(mid_menu_x - GetStringLength(m_pausemenus[m_curr_menu].list_items[i].text)/2,
+                   mid_menu_y + (MENU_ITEM_OFFS_Y*i) - (MENU_ITEM_OFFS_Y*m_pausemenus[m_curr_menu].list_size/2),
+                   m_pausemenus[m_curr_menu].list_items[i].text,
+                   m_pausemenus[m_curr_menu].curr_selected==i ? olc::RED : olc::WHITE,
+                   2);
+    }
 }
 
-// void DungeonThing::on_render(entt::registry &reg)
-// {
-
-//     //Clear(olc::BLACK);
-
-//     switch (GAME_STATE)
-//     {
-//         case state::WALKING:
-//         {
-//             Debug::Log("walk", 0, 0);
-
-//             break;
-//         }
-//         case state::PAUSED:
-//         {
-//             Debug::Log("pause", 0, 0);
-//             //on_render_walking(reg, windows[MAINWINDOW]);
-//             int winy, winx;
-
-//             // wresize(windows[MAINWINDOW], (winy/2)-2, winx-2);
-//             // box(windows[MAINWINDOW], 0, 0);
-
-//             // wmove(windows[MENUWINDOW], 40, 40);
-//             // wresize(windows[MENUWINDOW], (winy/2)-2, winx-2);
-//             // box(windows[MENUWINDOW], 0, 0);
-//             break;
-//         }
-
-//         case state::TRANSITION:
-//         {
-//             //on_render_transition(reg, windows);
-//             break;
-//         }
-
-//         default:
-//             Debug::Log("STATE NOT RECOGNIZED", 0, 0);
-//             break;
-//     }
-
-//     Debug::Print();
-
-//     auto renderview = reg.view<window, _isactive>();
-//     for( auto [ent, w]: renderview.each() )
-//     {
-//         // wrefresh(windows[w.id]);
-//     }
-//     // wrefresh(windows[0]);
-// }
 
 
-void on_render_transition(entt::registry &reg)
+void DungeonThing::on_render_transition_combat()
 {
-    Debug::Log("RENDER", 0,6);
-    auto renderview = reg.view<window, transitioning>();
-    for(auto [ent, w, t]: renderview.each())
-    {
-        // wresize(windows[w.id], w.w, w.h);
-        // wmove(windows[w.id], w.x, w.y);
-    }
+    auto [winx, winy] = GetScreenSize();
 
-    Debug::Log("RENDER", 0,7);
+    auto winy_main = winy * 0.7;
+    auto winy_combat = winy - winy_main;
+
+    // FIXME what the fuck
+    auto v = winy_combat/m_transition_time;
+    m_elapsed_transition_time += GetElapsedTime();
+    auto transition_coeff = 60*(m_transition_time/(m_elapsed_transition_time*m_elapsed_transition_time*m_elapsed_transition_time*m_elapsed_transition_time));
+    if(transition_coeff < 10) transition_coeff = 10;
+    m_transition_progress = 100-transition_coeff+10;// * GetElapsedTime();
+    auto winy_transition = winy - (winy_combat * (m_transition_progress/100));
+
+    auto col = olc::WHITE;
+    if(m_transition_progress > 20) col = olc::GREY;
+    if(m_transition_progress > 40) col = olc::DARK_GREY;
+    if(m_transition_progress > 60) col = olc::VERY_DARK_GREY;
+    if(m_transition_progress < 80)
+    {
+        auto walls = m_reg.view<_renderable, pos, size, _wall>();
+        for( auto [ent, p, s]: walls.each() )
+        {
+            for(int y = 0; y < s.height; y+=10)
+            {
+                for(int x = 0; x < s.width; x+=10)
+                {
+                    DrawString(p.x+x, p.y+y, "H", col);
+                }
+            }
+        }
+
+        auto simple = m_reg.view<_renderable, pos, simpleappearence>();
+        for( auto [ent, p, app]: simple.each() )
+        {
+            DrawString(p.x, p.y, app.c, col);
+        }
+    }
+    DrawLine(BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
+    DrawLine(BORDER_OFFS, winy_transition-BORDER_OFFS, winx-BORDER_OFFS, winy_transition-BORDER_OFFS); // bottom line
+    DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy_transition-BORDER_OFFS);     // left line
+    DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy_transition-BORDER_OFFS); // right line
+
+    DrawLine(BORDER_OFFS, winy_transition, winx-BORDER_OFFS, winy_transition);     // top line
+    DrawLine(BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
+    DrawLine(BORDER_OFFS, winy_transition, BORDER_OFFS, winy-BORDER_OFFS);     // left line
+    DrawLine(winx-BORDER_OFFS, winy_transition, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
 }

@@ -12,7 +12,7 @@ void on_init(entt::registry &reg, entt::entity &playerent)
 
 
     auto player = reg.create();
-    reg.emplace<movespeed>(player, 1.0f);
+    reg.emplace<movespeed>(player, 0.1f);
     reg.emplace<_renderable>(player);
     reg.emplace<pos>(player, 20, 40);
     reg.emplace<simpleappearence>(player, "#");
@@ -33,5 +33,14 @@ void on_init(entt::registry &reg, entt::entity &playerent)
     reg.emplace<dirHorisontal>(goblin);
     reg.emplace<moveTick>(goblin, 0.0f);
     reg.emplace<_ai>(goblin);
-    reg.emplace<_follow_player>(goblin);
+    //reg.emplace<_follow>(goblin, player);
+    reg.emplace<_at_rest>(goblin);
+
+    auto wall = reg.create();
+    reg.emplace<_wall>(wall);
+    reg.emplace<_renderable>(wall);
+    reg.emplace<pos>(wall, 100, 100);
+    reg.emplace<size>(wall, 400, 30);
+    reg.emplace<_solid>(wall);
+
 }

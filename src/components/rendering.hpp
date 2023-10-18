@@ -8,6 +8,7 @@ struct _renderable{};
 struct simpleappearence{
     std::string c;
 };
+
 struct complexappearence{
     char c;
 };

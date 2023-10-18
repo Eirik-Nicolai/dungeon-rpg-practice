@@ -1,21 +1,20 @@
 #include "ai.hpp"
 
-void on_follow_player(entt::registry &reg, entt::entity &player)
+void on_follow(entt::registry &reg)
 {
-  auto playerpos = reg.get<const pos>(player);
+  auto ai_view = reg.view<_follow, pos, dirVertical, dirHorisontal>();
 
-  auto ai_view = reg.view<_follow_player, pos, dirVertical, dirHorisontal>();
-
-  for(auto [ent, p, dirV, dirH]: ai_view.each())
+  for(auto [ent, follow, p, dirV, dirH]: ai_view.each())
   {
-    dirV.up = playerpos.y < p.y;
-    dirV.down = playerpos.y > p.y;
-    dirH.left = playerpos.x < p.x;
-    dirH.right = playerpos.x > p.x;
+    auto targetpos = reg.get<const pos>(follow.target);
+    dirV.up = targetpos.y < p.y;
+    dirV.down = targetpos.y > p.y;
+    dirH.left = targetpos.x < p.x;
+    dirH.right = targetpos.x > p.x;
   }
 }
 
-void on_ai(entt::registry &reg, entt::entity &player)
+void on_ai(entt::registry &reg)
 {
-  on_follow_player(reg, player);
+  on_follow(reg);
 }

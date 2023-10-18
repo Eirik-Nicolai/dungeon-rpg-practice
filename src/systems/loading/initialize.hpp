@@ -5,6 +5,7 @@
 
 #include "components/ai.hpp"
 #include "components/logic.hpp"
+#include "components/objects.hpp"
 #include "components/movement.hpp"
 #include "components/rendering.hpp"
 

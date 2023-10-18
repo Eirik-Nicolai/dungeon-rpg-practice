@@ -1,13 +1,10 @@
 #ifndef LOGIC_H_
 #define LOGIC_H_
 
-struct _player{};
-
 struct collision{
     int x, y;
     int w, h;
 };
-
 
 struct window{
     int id;
@@ -20,6 +17,9 @@ struct transitioning{
 };
 
 struct _isactive{};
+
+struct _solid{}; //cannot be walked through
+
 
 
 #endif // LOGIC_H_

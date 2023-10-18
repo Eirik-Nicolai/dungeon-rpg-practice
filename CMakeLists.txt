@@ -20,6 +20,7 @@ set(SRC_ENGINE
     src/engine/game.cpp
     src/engine/render.cpp
     src/engine/keypress.cpp
+    src/engine/menu.cpp
 )
 
 set(SRC_UTILS
