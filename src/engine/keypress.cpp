@@ -48,6 +48,13 @@ void DungeonThing::on_userinput_walking()
         NEXT_STATE.state = state::COMBAT;
         NEXT_STATE.type = type::INIT;
     }
+
+    // DEBUGGING
+    if (GetKey(olc::Key::X).bReleased)
+    {
+        NEXT_STATE.state = state::PAUSED;
+        NEXT_STATE.type = type::PAUSED;
+    }
 }
 
 void DungeonThing::on_userinput_paused()

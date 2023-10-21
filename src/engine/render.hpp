@@ -4,19 +4,19 @@
 #include <entt/entt.hpp>
 #include "game.hpp"
 
-
 #include "utils/debug.hpp"
+#include "utils/globals.hpp"
 
 #include "components/logic.hpp"
+#include "components/objects.hpp"
 #include "components/movement.hpp"
 #include "components/rendering.hpp"
 
 #define MENU_ITEM_OFFS_Y 30
 
-inline int GetStringLength(std::string& s)
+inline int GetStringLength(std::string s)
 {
-    return s.size() * 8 * 2;
+    return s.size() * 16 * 2;
 }
-
 
 #endif // RENDER_H_

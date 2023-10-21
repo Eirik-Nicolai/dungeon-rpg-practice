@@ -7,7 +7,9 @@
 #include "components/movement.hpp"
 
 
+void on_move_tick(entt::registry &);
 void on_move(entt::registry &);
+
 
 
 #endif // MOVEMENT_H_

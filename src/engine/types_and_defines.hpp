@@ -27,15 +27,25 @@ struct GameStateType
     INIT = 1,
     PLAYING_TRANSITION = 2,
 
+    // -------- TRANSITIONS --------
     FROM_COMBAT_TRANSITION = 1001,
-    FROM_PAUSED_TRANSITION = 1002,
+    FROM_PAUSED_TRANSITION,
+    // -------- -------- -------- --
+
+    // ROAMING----------------------
     FREEROAM = 1101,
+    // -----------------------------
 
+    // -----------------------------
     PLAYER_SELECTING = 2102,
-    PERFORMING_COMBAT_ACTIONS = 2403,
-    // subtype for error type 2
+    INIT_PLAYER_SELECTION,
+    PERFORMING_COMBAT_ACTIONS_PLAYER,
+    PERFORMING_COMBAT_ACTIONS_ENEMY,
+    // -----------------------------
 
+    // -----------------------------
     PAUSED = 5001,
+    // -----------------------------
 };
 };
 

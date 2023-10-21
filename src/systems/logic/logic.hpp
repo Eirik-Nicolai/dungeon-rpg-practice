@@ -4,10 +4,11 @@
 #include <entt/entt.hpp>
 
 #include "utils/debug.hpp"
+#include "utils/globals.hpp"
+
 
 #include "systems/AI/ai.hpp"
 #include "systems/movement/movement.hpp"
-#include "systems/transition/transition.hpp"
 
 #include "components/logic.hpp"
 #include "components/movement.hpp"
