@@ -60,3 +60,37 @@ void CombatMenu::ScrollRight()
   curr_selected += 2;
   if(curr_selected>=list_size) curr_selected = curr_selected-list_size;// + (curr_selected-list_size);
 }
+
+TargetMenu::TargetMenu(std::function<void(void)> f, entt::entity& e1)
+{
+  targets.emplace_back(e1);
+  list_items.emplace_back(TextItem{"", f});
+  list_size = targets.size();
+}
+
+TargetMenu::TargetMenu(std::function<void(void)> f, entt::entity& e1, entt::entity& e2)
+{
+  targets.emplace_back(e1);
+  targets.emplace_back(e2);
+  list_items.emplace_back(TextItem{"", f});
+  list_items.emplace_back(TextItem{"", f});
+  list_size = targets.size();
+
+  std::cout << list_size << std::endl;
+}
+
+TargetMenu::TargetMenu(std::function<void(void)> f, entt::entity& e1, entt::entity& e2, entt::entity& e3)
+{
+  targets.emplace_back(e2);
+  targets.emplace_back(e1);
+  targets.emplace_back(e3);
+  list_items.emplace_back(TextItem{"", f});
+  list_items.emplace_back(TextItem{"", f});
+  list_items.emplace_back(TextItem{"", f});
+  list_size = targets.size();
+}
+
+entt::entity TargetMenu::GetSelected()
+{
+  return targets[curr_selected];
+}

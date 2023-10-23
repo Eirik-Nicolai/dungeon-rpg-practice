@@ -22,7 +22,8 @@ class Debugger
             auto [winx, winy] = pge->GetWindowSize();
             winx *= 0.80;
             winy *= 0.80;
-            int offs = 0;
+            int offs = 1;
+            pge->DrawString(winx, winy, "-----------------------",olc::WHITE);
             for (auto &s: debug_lines)
             {
                 pge->DrawString(
@@ -33,6 +34,8 @@ class Debugger
                 );
                 offs++;
             }
+            pge->DrawString(winx, winy + (offs) * PIXEL_OFFS,"-----------------------",olc::WHITE);
+
         }
         void Clear()
         {

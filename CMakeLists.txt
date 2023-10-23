@@ -18,12 +18,14 @@ set(SRC_MAIN src/main.cpp)
 
 set(SRC_ENGINE
     src/engine/game.cpp
-    src/engine/render.cpp
-    src/engine/keypress.cpp
     src/engine/menu.cpp
+    src/engine/keypress.cpp
     src/engine/initialize.cpp
-    src/engine/state_walking.cpp
     src/engine/state_combat.cpp
+    src/engine/state_walking.cpp
+    src/engine/rendering/render.cpp
+    src/engine/rendering/render_combat.cpp
+    src/engine/rendering/render_walking.cpp
 )
 
 set(SRC_UTILS
@@ -34,6 +36,7 @@ set(SRC_SYSTEMS
     src/systems/AI/ai.cpp
     src/systems/logic/logic.cpp
     src/systems/movement/movement.cpp
+    src/systems/combat/damage.cpp
 )
 
 set(SRC_GAME ${SRC_MAIN} ${SRC_ENGINE} ${SRC_UTILS} ${SRC_SYSTEMS})

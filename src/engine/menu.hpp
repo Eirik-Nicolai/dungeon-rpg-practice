@@ -1,10 +1,14 @@
 #ifndef MENU_H_
 #define MENU_H_
 
-#include <iostream>
-#include <string>
-#include <functional>
 #include <vector>
+#include <string>
+#include <iostream>
+#include <functional>
+
+#include <entt/entt.hpp>
+
+#include "utils/debug.hpp"
 
 struct TextItem
 {
@@ -51,6 +55,20 @@ class CombatMenu : public Menu {
     void ScrollLeft();
     void ScrollRight();
 
+};
+
+class TargetMenu : public Menu {
+  public:
+    TargetMenu() = default;
+    TargetMenu(std::function<void(void)>, entt::entity&);
+    TargetMenu(std::function<void(void)>, entt::entity&, entt::entity&);
+    TargetMenu(std::function<void(void)>, entt::entity&, entt::entity&, entt::entity&);
+    TargetMenu(std::function<void(void)>, entt::entity&, entt::entity&, entt::entity&, entt::entity&);
+
+  public:
+    entt::entity GetSelected();
+  private:
+    std::vector<entt::entity> targets;
 };
 
 

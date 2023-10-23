@@ -3,13 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <list>
 
 #include <entt/entt.hpp>
-
-struct combat_moves
-{
-
-};
 
 
 namespace combat
@@ -24,6 +20,8 @@ namespace combat
 struct _enemy{};
 struct _ally{};
 
+struct _selected{};
+
 struct pet{
     entt::entity owner;
 };
@@ -32,7 +30,6 @@ struct health {
     int curr;
     int max;
 };
-
 
 struct mana {
     int curr;
@@ -49,22 +46,57 @@ struct stats{
     int mind;
 };
 
-struct ability
-{
-    int mana_cost;
-    std::string name;
-};
-
-struct pound : ability
+struct _action
 {};
 
-struct poison : public ability
-{
-    int tick_dmg;
+struct _debuff{};
+struct _buff{};
+
+struct tick{
+    int rounds;
 };
 
-struct ability_list{
-    std::vector<ability> list;
+struct weakness{
+    int amount;
 };
+
+struct fatigue{
+    int amount;
+};
+
+struct affects{
+    std::vector<entt::entity> targets; //FIXME should be list or smth
+};
+
+struct has_action{
+    entt::entity action;
+};
+
+
+struct damage{
+    int amount;
+};
+
+struct cost{
+    int mana;
+    int health;
+    int other;
+};
+
+struct visual{
+    std::string name;
+};
+struct adds_debuff{
+    entt::entity debuff;
+};
+struct adds_buff{
+    entt::entity debuff;
+};
+
+struct combat_action{
+    entt::entity action;
+    entt::entity target;
+};
+
 
 #endif // COMBAT_H_

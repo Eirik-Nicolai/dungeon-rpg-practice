@@ -1,82 +1,5 @@
 #include "render.hpp"
 
-void DungeonThing::on_render_walking()
-{
-    auto [winx, winy] = GetScreenSize();
-    DrawLine(BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
-    DrawLine(BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
-    DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy-BORDER_OFFS);     // left line
-    DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
-
-    auto walls = m_reg.view<_renderable, pos, size, _wall>();
-    for( auto [ent, p, s]: walls.each() )
-    {
-        for(int y = 0; y < s.height; y+=PIXEL_OFFS)
-        {
-            for(int x = 0; x < s.width; x+=PIXEL_OFFS)
-            {
-                DrawString(p.x+x, p.y+y, "H", olc::WHITE, 2);
-            }
-        }
-    }
-
-    auto simple = m_reg.view<_renderable, pos, simple_appearence>();
-    for( auto [ent, p, app]: simple.each() )
-    {
-        DrawString(p.x, p.y, app.c, olc::WHITE, 2);
-    }
-}
-
-void DungeonThing::on_render_combat()
-{
-    auto [winx, winy] = GetScreenSize();
-
-    auto winy_main = winy * 0.70;
-
-    DrawLine(BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, BORDER_OFFS);     // top line
-    DrawLine(BORDER_OFFS, winy_main-BORDER_OFFS, winx-BORDER_OFFS, winy_main-BORDER_OFFS); // bottom line
-    DrawLine(BORDER_OFFS, BORDER_OFFS, BORDER_OFFS, winy_main-BORDER_OFFS);     // left line
-    DrawLine(winx-BORDER_OFFS, BORDER_OFFS, winx-BORDER_OFFS, winy_main-BORDER_OFFS); // right line
-
-    DrawLine(BORDER_OFFS, winy_main, winx-BORDER_OFFS, winy_main);     // top line
-    DrawLine(BORDER_OFFS, winy-BORDER_OFFS, winx-BORDER_OFFS, winy-BORDER_OFFS); // bottom line
-    DrawLine(BORDER_OFFS, winy_main, BORDER_OFFS, winy-BORDER_OFFS);     // left line
-    DrawLine(winx-BORDER_OFFS, winy_main, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
-
-    auto winy_combat = winy - winy_main;
-     //FIXME move to init menu
-    int mid_menu_x[4];
-    mid_menu_x[0] = winx/3;
-    mid_menu_x[1] = winx/3;
-    mid_menu_x[2] = winx*2/3;
-    mid_menu_x[3] = winx*2/3;
-
-    int mid_menu_y = winy_main + winy_combat/2;
-
-    //debug line
-    // DrawLine(mid_menu_x[0], 0, mid_menu_x[0], winy);
-    // DrawLine(0, mid_menu_y, winx, mid_menu_y);
-
-    for(int i = 0; i < m_combatmenus[m_curr_menu].list_size; ++i)
-    {
-        DrawString(mid_menu_x[i] - GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text)/2,
-                   mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),
-                   m_combatmenus[m_curr_menu].list_items[i].text,
-                   olc::WHITE,
-                   4);
-        if(m_combatmenus[m_curr_menu].curr_selected == i)
-        {
-            DrawString(mid_menu_x[i] - (GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text)/2) - GetStringLength("-->"),
-                       mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),
-                       "-->",
-                       olc::WHITE,
-                       4);
-
-        }
-    }
-}
-
-
 void DungeonThing::on_render_paused()
 {
     auto [winx, winy] = GetScreenSize();
@@ -176,7 +99,6 @@ void DungeonThing::on_render_transition_to_walking_from_combat(float dt)
 
     // FIXME what the fuck
     auto v = winy_combat/m_transition_time;
-    std::cout << m_elapsed_transition_time << std::endl;
     m_elapsed_transition_time += dt;
     auto transition_coeff = (1-(m_elapsed_transition_time)/m_transition_time);
     m_transition_progress = 100*transition_coeff;// * GetElapsedTime();

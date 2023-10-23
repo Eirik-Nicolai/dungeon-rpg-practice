@@ -59,18 +59,51 @@ void DungeonThing::on_load_init()
     m_reg.emplace<dirHorisontal>(player);
     m_reg.emplace<moveTick>(player, 0.0f);
     // COMBAT
+    m_reg.emplace<_ally>(player);
+    m_reg.emplace<combat_appearence>(player, "#");
     m_reg.emplace<health>(player, 100, 100);
     m_reg.emplace<mana>(player, 100, 100);;
     m_reg.emplace<armour>(player, 0, 0);;
     m_reg.emplace<stats>(player, 1, 1);
 
-    m_reg.emplace<ability_list>(player, std::vector<ability>{
-        poison{{50,"Poison"},
-        10
-    },
-    });
+    auto reg_attack = m_reg.create();
+    m_reg.emplace<visual>(reg_attack, "ATK");
+    m_reg.emplace<damage>(reg_attack, 30);
+
+    // m_reg.emplace<skill_list>(player, std::vector<skill>{
+    //     poison{{50,"Poison"},
+    //     10
+    // },
+    // });
 
     m_player = player;
+
+
+    TextItem attack{
+        "ATTACK",
+        [=]{
+            NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            m_intended_action = reg_attack;
+        }
+    };
+    TextItem skill{
+        "SKILL",
+        [&]{
+            m_curr_menu = 1;
+        }
+    };
+    TextItem item{
+        "ITEM",
+        []{
+            std::cout << "EXIT NOT IMPL" << std::endl;
+        }};
+    TextItem run {
+        "RUN",
+        [&]{
+            NEXT_STATE = {state::WALKING, type::FROM_COMBAT_TRANSITION};
+            std::cout << "EXIT NOT IMPL" << std::endl;
+        }};
+    m_combatmenus.emplace_back(CombatMenu(attack, skill, item, run));
 
 
     auto goblin = m_reg.create();

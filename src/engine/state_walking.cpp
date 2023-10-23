@@ -7,8 +7,7 @@ void DungeonThing::STATE_WALKING(float dt)
     {
         case type::INIT:
         {
-            DrawString(600,420, "INIT");
-            std::cout << "INIT" << std::endl;
+            Debugger::instance()+="STATE: INIT";
             // TODO save curr state ?
 
             // TODO init entities used for combat
@@ -19,7 +18,7 @@ void DungeonThing::STATE_WALKING(float dt)
         break;
         case type::FROM_COMBAT_TRANSITION:
         {
-            DrawString(600,420, "FROM_COMBAT");
+            Debugger::instance()+="STATE: FROM_COMBAT_TRANSITION";
             if(m_transition_progress <= 0)
             {
                 m_transition_progress = 0;
@@ -30,15 +29,15 @@ void DungeonThing::STATE_WALKING(float dt)
         break;
         case type::FROM_PAUSED_TRANSITION:
         {
-            DrawString(600,420, "FROM_PAUSED");
+            Debugger::instance()+="STATE: FROM_PAUSED_TRANSITION";
+
             NEXT_STATE.type = type::FREEROAM;
 
         }
         break;
         case type::FREEROAM:
         {
-            DrawString(600,420, "FREEROAM");
-            //std::cout << "SELECTING" << std::endl;
+            Debugger::instance()+="STATE: FREEROAM";
             on_userinput_walking();
 
             if(m_fElapsedTimeSinceTick >= 0.1)
@@ -53,7 +52,6 @@ void DungeonThing::STATE_WALKING(float dt)
             else
             {
                 m_fElapsedTimeSinceTick += dt;
-                //on_move(m_reg);
             }
 
             on_render_walking();

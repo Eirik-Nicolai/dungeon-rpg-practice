@@ -2,7 +2,7 @@
 #define RENDER_H_
 
 #include <entt/entt.hpp>
-#include "game.hpp"
+#include "engine/game.hpp"
 
 #include "utils/debug.hpp"
 #include "utils/globals.hpp"

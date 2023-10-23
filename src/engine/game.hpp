@@ -13,6 +13,7 @@
 
 #include "systems/AI/ai.hpp"
 #include "systems/logic/logic.hpp"
+#include "systems/combat/damage.hpp"
 #include "systems/movement/movement.hpp"
 
 class DungeonThing : public olc::PixelGameEngine
@@ -44,12 +45,18 @@ class DungeonThing : public olc::PixelGameEngine
         void on_userinput_paused();
         void on_userinput_combat();
 
+
+        bool delay_for(float, float);
+
     private:
         entt::registry m_reg;
         void render_windows();
 
         std::vector<CombatMenu> m_combatmenus;
+        entt::entity m_intended_action;
+        TargetMenu m_targetmenu;
         std::vector<PauseMenu> m_pausemenus;
+
         int m_curr_menu;
 
         State CURR_STATE;
@@ -65,9 +72,9 @@ class DungeonThing : public olc::PixelGameEngine
         float m_transition_time;
         float m_elapsed_transition_time;
 
-
-        std::queue<combat_moves> m_movequeue;
-
+        std::queue<combat_action> m_movequeue_player;
+        std::queue<combat_action> m_movequeue_allies;
+        std::queue<combat_action> m_movequeue_enemy;
 
     private:
         std::vector<std::string> m_debug;

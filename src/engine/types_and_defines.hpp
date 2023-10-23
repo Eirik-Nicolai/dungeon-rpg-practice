@@ -37,9 +37,13 @@ struct GameStateType
     // -----------------------------
 
     // -----------------------------
-    PLAYER_SELECTING = 2102,
-    INIT_PLAYER_SELECTION,
+    PLAYER_SELECTING_ACTION = 2102,
+    INIT_PLAYER_SELECTING_TARGET,
+    PLAYER_SELECTING_TARGET,
+    ENEMY_SELECTING_ACTION,
+    ALLY_SELECTING_ACTION,
     PERFORMING_COMBAT_ACTIONS_PLAYER,
+    PERFORMING_COMBAT_ACTIONS_ALLIES,
     PERFORMING_COMBAT_ACTIONS_ENEMY,
     // -----------------------------
 

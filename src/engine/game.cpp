@@ -30,38 +30,12 @@ DungeonThing::DungeonThing()
     };
     m_pausemenus.emplace_back(PauseMenu(resume, options, exit));
 
-
-    TextItem attack{
-        "ATTACK",
-        [this]{
-            std::cout << "ATTACK NOT IMPL" << std::endl;
-        }
-    };
-    TextItem skill{
-        "SKILL",
-        [this]{
-            m_curr_menu = 1;
-        }
-    };
-    TextItem item{
-        "ITEM",
-        []{
-            std::cout << "EXIT NOT IMPL" << std::endl;
-        }};
-    TextItem run {
-        "RUN",
-        [this]{
-            NEXT_STATE = {state::WALKING, type::FROM_COMBAT_TRANSITION};
-            std::cout << "EXIT NOT IMPL" << std::endl;
-        }
-};
-
     TextItem fire{
-        "FIRE",
-        [this]{
-            std::cout << "FIRE NOT IMPL" << std::endl;
-        }
-    };
+    "FIRE",
+    [this]{
+        std::cout << "FIRE NOT IMPL" << std::endl;
+    }
+};
     TextItem ice{
         "ICE",
         []{
@@ -73,8 +47,7 @@ DungeonThing::DungeonThing()
         []{
             std::cout << "WIND NOT IMPL" << std::endl;
         }};
-    m_combatmenus.emplace_back(CombatMenu(attack, skill, item, run));
-    m_combatmenus.emplace_back(CombatMenu(fire,ice, wind));
+    //m_combatmenus.emplace_back(CombatMenu(fire,ice, wind));
 }
 
 bool DungeonThing::OnUserCreate()
@@ -93,7 +66,7 @@ bool DungeonThing::OnUserUpdate(float dt)
 {
     Clear(olc::BLACK);
     Debugger::instance().Clear();
-    Debugger::instance() += ("Logged");
+
     switch(CURR_STATE.state)
     {
         case state::COMBAT:
@@ -104,7 +77,6 @@ bool DungeonThing::OnUserUpdate(float dt)
 
         case state::PAUSED:
         {
-            DrawString(600,400, "PAUSED");
             on_userinput_paused();
             on_render_paused();
         }
@@ -112,7 +84,6 @@ bool DungeonThing::OnUserUpdate(float dt)
 
         case state::WALKING:
         {
-            DrawString(600,400, "WALKING");
             STATE_WALKING(dt);
         }
         break;
@@ -127,4 +98,18 @@ bool DungeonThing::OnUserUpdate(float dt)
     CURR_STATE = NEXT_STATE;
 
     return true;
+}
+
+
+
+
+bool DungeonThing::delay_for(float delay, float dt)
+{
+    if(m_elapsed_transition_time >= delay)
+    {
+        m_elapsed_transition_time = 0;
+        return true;
+    }
+    m_elapsed_transition_time+= dt;
+    return false;
 }

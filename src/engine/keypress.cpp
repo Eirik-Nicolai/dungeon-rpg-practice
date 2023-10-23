@@ -76,24 +76,42 @@ void DungeonThing::on_userinput_paused()
 
 void DungeonThing::on_userinput_combat()
 {
-    if (GetKey(olc::Key::W).bReleased)
+    if (CURR_STATE.type == type::PLAYER_SELECTING_ACTION)
     {
-        m_combatmenus[m_curr_menu].ScrollUp();
+        if (GetKey(olc::Key::W).bReleased || GetKey(olc::Key::UP).bReleased)
+        {
+            m_combatmenus[m_curr_menu].ScrollUp();
+        }
+        if (GetKey(olc::Key::S).bReleased || GetKey(olc::Key::DOWN).bReleased)
+        {
+            m_combatmenus[m_curr_menu].ScrollDown();
+        }
+        if (GetKey(olc::Key::A).bReleased || GetKey(olc::Key::LEFT).bReleased)
+        {
+            m_combatmenus[m_curr_menu].ScrollLeft();
+        }
+        if (GetKey(olc::Key::D).bReleased || GetKey(olc::Key::RIGHT).bReleased)
+        {
+            m_combatmenus[m_curr_menu].ScrollRight();
+        }
+        if(GetKey(olc::Key::ENTER).bReleased || GetKey(olc::Key::SPACE).bReleased)
+        {
+            m_combatmenus[m_curr_menu].Select();
+        }
     }
-    if (GetKey(olc::Key::S).bReleased)
+    else
     {
-        m_combatmenus[m_curr_menu].ScrollDown();
-    }
-    if (GetKey(olc::Key::A).bReleased)
-    {
-        m_combatmenus[m_curr_menu].ScrollLeft();
-    }
-    if (GetKey(olc::Key::D).bReleased)
-    {
-        m_combatmenus[m_curr_menu].ScrollRight();
-    }
-    if(GetKey(olc::Key::ENTER).bReleased)
-    {
-        m_combatmenus[m_curr_menu].Select();
+        if (GetKey(olc::Key::W).bReleased || GetKey(olc::Key::UP).bReleased)
+        {
+            m_targetmenu.ScrollDown();
+        }
+        if (GetKey(olc::Key::S).bReleased || GetKey(olc::Key::DOWN).bReleased)
+        {
+            m_targetmenu.ScrollDown();
+        }
+        if(GetKey(olc::Key::ENTER).bReleased || GetKey(olc::Key::SPACE).bReleased)
+        {
+            m_targetmenu.Select();
+        }
     }
 }
