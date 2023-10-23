@@ -13,9 +13,9 @@
 
 #include "systems/AI/ai.hpp"
 #include "systems/logic/logic.hpp"
-#include "systems/combat/damage.hpp"
 #include "systems/movement/movement.hpp"
 #include "systems/combat/buff_debuff.hpp"
+#include "systems/combat/action_perform.hpp"
 
 class DungeonThing : public olc::PixelGameEngine
 {
@@ -45,7 +45,6 @@ class DungeonThing : public olc::PixelGameEngine
         void on_userinput_walking();
         void on_userinput_paused();
         void on_userinput_combat();
-
 
         bool delay_for(float, float);
 

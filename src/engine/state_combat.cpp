@@ -21,8 +21,7 @@ void DungeonThing::STATE_COMBAT(float dt)
             m_reg.emplace<_debuff>(poison);
             m_reg.emplace<visual>(poison, "Poison");
             m_reg.emplace<damage>(poison, 5);
-            m_reg.emplace<tick>(poison, 5);
-            m_reg.emplace<affects>(poison);
+            m_reg.emplace<tick>(poison, 2);
 
             auto poison_attack = m_reg.create();
             m_reg.emplace<visual>(poison_attack, "POISON ATTACK");
@@ -36,17 +35,22 @@ void DungeonThing::STATE_COMBAT(float dt)
             m_reg.emplace<combat_appearence>(goblin_big, "V");
             m_reg.emplace<health>(goblin_big, 100, 100);
             m_reg.emplace<armour>(goblin_big, 5);
-            m_reg.emplace<stats>(goblin_big, 10, 0);
+            m_reg.emplace<force>(goblin_big, 10, 10);
+            m_reg.emplace<mind>(goblin_big, 0, 0);
             m_reg.emplace<has_action>(goblin_big, heavy_attack);
             m_reg.emplace<_enemy>(goblin_big);
+            m_reg.emplace<affected>(goblin_big);
 
             auto goblin_mage = m_reg.create();
             m_reg.emplace<combat_appearence>(goblin_mage, "U");
             m_reg.emplace<health>(goblin_mage, 40, 40);
             m_reg.emplace<armour>(goblin_mage, 1);
-            m_reg.emplace<stats>(goblin_mage, 0, 20);
+            m_reg.emplace<force>(goblin_mage, 0, 0);
+            m_reg.emplace<mind>(goblin_mage, 20, 20);
             m_reg.emplace<has_action>(goblin_mage, poison_attack);
             m_reg.emplace<_enemy>(goblin_mage);
+            m_reg.emplace<affected>(goblin_mage);
+
 
             // find positions for multi-group enemies/allies
             auto enemy_group = m_reg.view<_enemy>();
@@ -91,7 +95,6 @@ void DungeonThing::STATE_COMBAT(float dt)
                     auto children = m_reg.get<action_children>(m_intended_action).children;
                     for(auto a : children)
                     {
-                        std::cout << "adding " << m_reg.get<visual>(a).name << std::endl;
                         m_movequeue_player.emplace(combat_action{
                             .action = a,
                             .target = target
@@ -106,7 +109,16 @@ void DungeonThing::STATE_COMBAT(float dt)
                     });
                 }
                 NEXT_STATE.type = type::ALLY_SELECTING_ACTION;
-            }, goblin_mage, goblin_big);
+            });
+
+            //FIXME clean up
+            auto enemy_targets = m_reg.view<_enemy>();
+            auto ally_targets = m_reg.view<_ally>();
+            std::vector<entt::entity> enemyvec(enemy_targets.begin(), enemy_targets.end());
+            std::vector<entt::entity> allyvec(ally_targets.begin(), ally_targets.end());
+            m_targetmenu.AddTargets(enemyvec);
+            m_targetmenu.AddTargets(allyvec);
+
             m_reg.ctx().emplace<CombatState>(-1);
 
             m_transition_progress = 0.0;
@@ -144,6 +156,17 @@ void DungeonThing::STATE_COMBAT(float dt)
             on_render_combat();
         }
         break;
+        case type::ALLY_SELECTING_ACTION:
+        {
+            Debugger::instance()+="STATE: ALLY_SELECTING_ACTION";
+
+            if(delay_for(1, dt))
+            {
+                NEXT_STATE.type = type::ENEMY_SELECTING_ACTION;
+            }
+            on_render_combat();
+        }
+        break;
         case type::ENEMY_SELECTING_ACTION:
         {
             Debugger::instance()+="STATE: ENEMY_SELECTING_ACTION";
@@ -157,17 +180,6 @@ void DungeonThing::STATE_COMBAT(float dt)
                 });
             }
             NEXT_STATE.type = type::PERFORMING_COMBAT_ACTIONS_PLAYER;
-            on_render_combat();
-        }
-        break;
-        case type::ALLY_SELECTING_ACTION:
-        {
-            Debugger::instance()+="STATE: ALLY_SELECTING_ACTION";
-
-            if(delay_for(1, dt))
-            {
-                NEXT_STATE.type = type::ENEMY_SELECTING_ACTION;
-            }
             on_render_combat();
         }
         break;
@@ -194,7 +206,7 @@ void DungeonThing::STATE_COMBAT(float dt)
                 if(delay_for(1, dt))
                 {
                     auto [action, target] = m_movequeue_player.front();
-                    on_damage(m_reg, m_player, target, action);
+                    on_perform_action(m_reg, m_player, target, action);
                     m_movequeue_player.pop();
                 }
             }
@@ -227,7 +239,7 @@ void DungeonThing::STATE_COMBAT(float dt)
                 if(delay_for(1, dt))
                 {
                     auto [action, target] = m_movequeue_enemy.front();
-                    on_damage(m_reg, m_player, target, action);
+                    on_perform_action(m_reg, m_player, target, action);
                     m_movequeue_enemy.pop();
                 }
             }

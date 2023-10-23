@@ -36,7 +36,7 @@ set(SRC_SYSTEMS
     src/systems/AI/ai.cpp
     src/systems/logic/logic.cpp
     src/systems/movement/movement.cpp
-    src/systems/combat/damage.cpp
+    src/systems/combat/action_perform.cpp
     src/systems/combat/buff_debuff.cpp
 )
 

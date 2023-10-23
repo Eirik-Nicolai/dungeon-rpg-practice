@@ -44,16 +44,15 @@ void DungeonThing::on_userinput_walking()
     // OPEN INVENTORY / PAUSE GAME
     if (GetKey(olc::Key::I).bReleased)
     {
-        // NEXT_STATE = state::PAUSED;
-        NEXT_STATE.state = state::COMBAT;
-        NEXT_STATE.type = type::INIT;
+        NEXT_STATE.state = state::PAUSED;
+        NEXT_STATE.type = type::INIT_PAUSED;
     }
 
     // DEBUGGING
     if (GetKey(olc::Key::X).bReleased)
     {
-        NEXT_STATE.state = state::PAUSED;
-        NEXT_STATE.type = type::PAUSED;
+        NEXT_STATE.state = state::COMBAT;
+        NEXT_STATE.type = type::INIT;
     }
 }
 

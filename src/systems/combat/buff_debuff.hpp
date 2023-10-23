@@ -19,6 +19,8 @@ using allies = entt::basic_view<entt::get_t<entt::storage_for_t<_ally>>, entt::e
 
 void on_damage(entt::registry&, entt::entity&, entt::entity&, entt::entity&);
 
+void on_debuff_gone(entt::registry&, entt::entity&, entt::entity&);
+
 void on_buff_debuff(entt::registry&);
 void on_buff_debuff_enemy(entt::registry &, enemies &);
 void on_buff_debuff_ally(entt::registry &, allies &);

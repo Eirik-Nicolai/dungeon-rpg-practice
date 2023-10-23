@@ -20,28 +20,26 @@ void DungeonThing::on_render_combat()
 
     //FIXME clean up all of this
     auto enemy_view = m_reg.view<_enemy>();
-    auto debuff_view = m_reg.view<_debuff, affects>();
 
     for(auto [ent]: enemy_view.each())
     {
-        auto [pos, app, h] = m_reg.get<combat::pos, combat_appearence, health>(ent);
+        auto [pos, app, h, f] = m_reg.get<combat::pos, combat_appearence, health, force>(ent);
         DrawString(pos.x, pos.y, app.c, olc::WHITE, 4);
         DrawString(pos.x+GetStringLength("100"),
                    pos.y, std::to_string(h.curr), olc::RED, 4);
+        DrawString(pos.x-GetStringLength("1000"),
+                   pos.y, std::to_string(f.curr), olc::BLUE, 4);
         if(m_targetmenu.GetSelected() == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
             DrawString(pos.x-GetStringLength("-->"),pos.y,"-->",olc::WHITE,4);
-        for(auto [dent, aff] : debuff_view.each())
+        auto affctd = m_reg.get<affected>(ent);
+        for(auto dent : affctd.effects)
         {
-            for (auto t : aff.targets)
-            {
-                if (t == ent)
-                {
-                    auto name = m_reg.get<visual>(dent).name;
-                    DrawString(pos.x,
-                               pos.y+GetStringLength("x"),
-                               name, olc::RED, 4);
-                }
-            }
+            auto name = m_reg.get<visual>(dent).name;
+            auto rounds_left = m_reg.get<tick>(dent).rounds;
+            DrawString(pos.x,
+                       pos.y+GetStringLength("x"),
+                       name + " " + std::to_string(rounds_left),
+                       olc::RED, 2);
         }
     }
 
@@ -56,18 +54,15 @@ void DungeonThing::on_render_combat()
         if(m_targetmenu.GetSelected() == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
             DrawString(pos.x,pos.y,"<--",olc::WHITE,4);
 
-        for(auto [dent, aff] : debuff_view.each())
+        auto affctd = m_reg.get<affected>(ent);
+        for(auto dent : affctd.effects)
         {
-            for (auto t : aff.targets)
-            {
-                if (t == ent)
-                {
-                    auto name = m_reg.get<visual>(dent).name;
-                    DrawString(pos.x,
-                               pos.y+GetStringLength("x")+50,
-                               name, olc::RED, 4);
-                }
-            }
+            auto name = m_reg.get<visual>(dent).name;
+            auto rounds_left = m_reg.get<tick>(dent).rounds;
+            DrawString(pos.x,
+                       pos.y+GetStringLength("x"),
+                       name + " " + std::to_string(rounds_left),
+                       olc::RED, 2);
         }
     }
 
@@ -84,7 +79,7 @@ void DungeonThing::on_render_combat()
             mid_menu_x[3] = winx*2/3;
             // }
             Debugger::instance()+="Currently selected: " + std::to_string(m_combatmenus[m_curr_menu].curr_selected);
-            for(int i = 0; i < m_combatmenus[m_curr_menu].list_size; ++i)
+            for(int i = 0; i < m_combatmenus[m_curr_menu].ListSize(); ++i)
             {
                 DrawString(mid_menu_x[i] - GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text)/2,
                            mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),

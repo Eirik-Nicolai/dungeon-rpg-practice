@@ -10,6 +10,8 @@
 
 #include "utils/debug.hpp"
 
+#include "components/combat.hpp"
+
 struct TextItem
 {
   std::string text;
@@ -28,11 +30,11 @@ class Menu {
   public:
     void ScrollDown();
     void ScrollUp();
+    int ListSize();
     void Select();
 
   public:
     int curr_selected;
-    int list_size;
     std::vector<TextItem> list_items;
 };
 
@@ -50,6 +52,8 @@ class CombatMenu : public Menu {
     CombatMenu() = default;
     CombatMenu(TextItem&, TextItem&, TextItem&, TextItem&);
     CombatMenu(TextItem&, TextItem&, TextItem&);
+    CombatMenu(TextItem&, TextItem&);
+    CombatMenu(TextItem&);
 
   public:
     void ScrollLeft();
@@ -60,10 +64,9 @@ class CombatMenu : public Menu {
 class TargetMenu : public Menu {
   public:
     TargetMenu() = default;
-    TargetMenu(std::function<void(void)>, entt::entity&);
-    TargetMenu(std::function<void(void)>, entt::entity&, entt::entity&);
-    TargetMenu(std::function<void(void)>, entt::entity&, entt::entity&, entt::entity&);
-    TargetMenu(std::function<void(void)>, entt::entity&, entt::entity&, entt::entity&, entt::entity&);
+    TargetMenu(std::function<void(void)>);
+
+    void AddTargets(std::vector<entt::entity> &);
 
   public:
     entt::entity GetSelected();

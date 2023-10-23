@@ -8,6 +8,9 @@
 #include <entt/entt.hpp>
 
 
+
+//FIXME clean up and move to diff files for better overview
+
 namespace combat
 {
     struct pos
@@ -17,8 +20,10 @@ namespace combat
     };
 };
 
+struct target{};
+
 struct _enemy{};
-struct _ally{};
+struct _ally {};
 
 struct _selected{};
 
@@ -36,14 +41,26 @@ struct mana {
     int max;
 };
 
+// physical def
 struct armour {
     int curr;
     int max;
 };
 
-struct stats{
-    int atk;
-    int mind;
+//magical def
+struct willpower {
+    int curr;
+    int max;
+};
+
+struct force{
+    int curr; //physical
+    int max;  //magical
+};
+
+struct mind{
+    int curr; //physical
+    int max;  //magical
 };
 
 struct _action
@@ -60,16 +77,42 @@ struct tick{
     int rounds;
 };
 
-struct weakness{
+struct force_modifier{
+    float amount;
+};
+struct force_adder{
     int amount;
 };
 
-struct fatigue{
+struct mind_modifier{
+    float amount;
+};
+struct mind_adder{
     int amount;
 };
 
-struct affects{
-    std::vector<entt::entity> targets; //FIXME should be list or smth
+struct armour_modifier{
+    float amount;
+};
+struct armour_adder{
+    int amount;
+};
+
+struct willpower_modifier{
+    float amount;
+};
+struct willpower_adder{
+    int amount;
+};
+
+struct dmg_modifier{
+    float amount;
+};
+
+struct _invincibility{};
+
+struct affected{
+    std::vector<entt::entity> effects; //FIXME should be list or smth
 };
 
 struct has_action{
@@ -80,8 +123,11 @@ struct heal{
     int amount;
 };
 
+enum class dmg_type {MAGICAL, PHYSICAL, PURE};
+
 struct damage{
     int amount;
+    dmg_type type;
 };
 
 struct cost{
@@ -104,6 +150,15 @@ struct combat_action{
     entt::entity action;
     entt::entity target;
 };
+
+struct _skill{};
+
+// removes every debuff on target
+struct _cleanse{};
+
+// summons creature defined by other components
+struct _summon{};
+
 
 
 #endif // COMBAT_H_

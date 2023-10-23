@@ -32,7 +32,6 @@ void DungeonThing::STATE_WALKING(float dt)
             Debugger::instance()+="STATE: FROM_PAUSED_TRANSITION";
 
             NEXT_STATE.type = type::FREEROAM;
-
         }
         break;
         case type::FREEROAM:

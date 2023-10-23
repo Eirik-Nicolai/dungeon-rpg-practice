@@ -29,25 +29,6 @@ DungeonThing::DungeonThing()
         }
     };
     m_pausemenus.emplace_back(PauseMenu(resume, options, exit));
-
-    TextItem fire{
-    "FIRE",
-    [this]{
-        std::cout << "FIRE NOT IMPL" << std::endl;
-    }
-};
-    TextItem ice{
-        "ICE",
-        []{
-            std::cout << "ICE NOT IMPL" << std::endl;
-        }
-    };
-    TextItem wind{
-        "WIND",
-        []{
-            std::cout << "WIND NOT IMPL" << std::endl;
-        }};
-    //m_combatmenus.emplace_back(CombatMenu(fire,ice, wind));
 }
 
 bool DungeonThing::OnUserCreate()

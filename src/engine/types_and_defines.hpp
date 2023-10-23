@@ -51,7 +51,10 @@ struct GameStateType
     // -----------------------------
 
     // -----------------------------
-    PAUSED = 5001,
+    INIT_PAUSED = 5001,
+    OVERVIEW,
+    INVENTORY,
+    ITEM_SELECTED,
     // -----------------------------
 };
 };
