@@ -45,6 +45,9 @@ struct GameStateType
     PERFORMING_COMBAT_ACTIONS_PLAYER,
     PERFORMING_COMBAT_ACTIONS_ALLIES,
     PERFORMING_COMBAT_ACTIONS_ENEMY,
+    PERFORMING_BUFF_DEBUFF_ACTIONS_ALLIES,
+    PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY,
+
     // -----------------------------
 
     // -----------------------------

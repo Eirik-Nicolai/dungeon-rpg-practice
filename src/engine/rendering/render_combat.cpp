@@ -18,6 +18,7 @@ void DungeonThing::on_render_combat()
     DrawLine(BORDER_OFFS, winy_main, BORDER_OFFS, winy-BORDER_OFFS);     // left line
     DrawLine(winx-BORDER_OFFS, winy_main, winx-BORDER_OFFS, winy-BORDER_OFFS); // right line
 
+    //FIXME clean up all of this
     auto enemy_view = m_reg.view<_enemy>();
     auto debuff_view = m_reg.view<_debuff, affects>();
 
@@ -54,6 +55,20 @@ void DungeonThing::on_render_combat()
                    pos.y, std::to_string(h.curr), olc::RED, 4);
         if(m_targetmenu.GetSelected() == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
             DrawString(pos.x,pos.y,"<--",olc::WHITE,4);
+
+        for(auto [dent, aff] : debuff_view.each())
+        {
+            for (auto t : aff.targets)
+            {
+                if (t == ent)
+                {
+                    auto name = m_reg.get<visual>(dent).name;
+                    DrawString(pos.x,
+                               pos.y+GetStringLength("x")+50,
+                               name, olc::RED, 4);
+                }
+            }
+        }
     }
 
     switch (CURR_STATE.type)
@@ -67,7 +82,6 @@ void DungeonThing::on_render_combat()
             mid_menu_x[1] = winx/3;
             mid_menu_x[2] = winx*2/3;
             mid_menu_x[3] = winx*2/3;
-
             // }
             Debugger::instance()+="Currently selected: " + std::to_string(m_combatmenus[m_curr_menu].curr_selected);
             for(int i = 0; i < m_combatmenus[m_curr_menu].list_size; ++i)

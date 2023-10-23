@@ -75,8 +75,6 @@ TargetMenu::TargetMenu(std::function<void(void)> f, entt::entity& e1, entt::enti
   list_items.emplace_back(TextItem{"", f});
   list_items.emplace_back(TextItem{"", f});
   list_size = targets.size();
-
-  std::cout << list_size << std::endl;
 }
 
 TargetMenu::TargetMenu(std::function<void(void)> f, entt::entity& e1, entt::entity& e2, entt::entity& e3)

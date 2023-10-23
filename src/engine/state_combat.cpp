@@ -15,6 +15,8 @@ void DungeonThing::STATE_COMBAT(float dt)
             Debugger::instance()+="STATE: INIT";
             // TODO save curr state ?
 
+
+            //FIXME needs to actually be loaded in somehow
             auto poison = m_reg.create();
             m_reg.emplace<_debuff>(poison);
             m_reg.emplace<visual>(poison, "Poison");
@@ -24,7 +26,6 @@ void DungeonThing::STATE_COMBAT(float dt)
 
             auto poison_attack = m_reg.create();
             m_reg.emplace<visual>(poison_attack, "POISON ATTACK");
-            m_reg.emplace<damage>(poison_attack, 0);
             m_reg.emplace<adds_debuff>(poison_attack, poison);
 
             auto heavy_attack = m_reg.create();
@@ -131,19 +132,15 @@ void DungeonThing::STATE_COMBAT(float dt)
         {
             Debugger::instance()+="STATE: ENEMY_SELECTING_ACTION";
             //FIXME some sort of ai
-            auto enemy_view = m_reg.view<_enemy, has_action>();
-            for (auto [ent, act] : enemy_view.each())
+            auto enemy_action_view = m_reg.view<_enemy, has_action>();
+            for (auto [ent, act] : enemy_action_view.each())
             {
                 m_movequeue_enemy.emplace(combat_action{
                     .action = act.action,
                     .target = m_player
                 });
-
             }
-            if(delay_for(1, dt))
-            {
-                NEXT_STATE.type = type::PERFORMING_COMBAT_ACTIONS_PLAYER;
-            }
+            NEXT_STATE.type = type::PERFORMING_COMBAT_ACTIONS_PLAYER;
             on_render_combat();
         }
         break;
@@ -160,7 +157,7 @@ void DungeonThing::STATE_COMBAT(float dt)
         break;
         case type::INIT_PLAYER_SELECTING_TARGET:
         {
-            std::cout << "INIT_PLAYER_SELECTING_TARGET" << std::endl;
+            Debugger::instance()+="STATE: INIT_PLAYER_SELECTING_TARGET";
             on_render_combat();
             NEXT_STATE.type = type::PLAYER_SELECTING_TARGET;
         }
@@ -197,15 +194,38 @@ void DungeonThing::STATE_COMBAT(float dt)
         case type::PERFORMING_COMBAT_ACTIONS_ENEMY:
         {
             Debugger::instance()+="STATE: PERFORMING_COMBAT_ACTIONS_ENEMY";
-
-
-            // while(!m_movequeue_enemy.empty())
-            // {
-            //     auto [action, target] = m_movequeue_player.front();
-            //     on_damage(m_reg, m_player, target, action);
-            //     m_movequeue_player.pop();
-            // }
+            if(m_movequeue_enemy.empty())
+            {
+                if(delay_for(1, dt))
+                {
+                    NEXT_STATE.type = type::PERFORMING_BUFF_DEBUFF_ACTIONS_ALLIES;
+                }
+            }
+            else
+            {
+                if(delay_for(1, dt))
+                {
+                    auto [action, target] = m_movequeue_enemy.front();
+                    on_damage(m_reg, m_player, target, action);
+                    m_movequeue_enemy.pop();
+                }
+            }
             on_render_combat();
+        }
+        break;
+        case type::PERFORMING_BUFF_DEBUFF_ACTIONS_ALLIES:
+        {
+            Debugger::instance()+="STATE: PERFORMING_BUFF_DEBUFF_ACTIONS_ALLIES";
+            auto allies = m_reg.view<_ally>();
+            on_buff_debuff_ally(m_reg, allies);
+            NEXT_STATE.type = type::PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY;
+        }
+        break;
+        case type::PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY:
+        {
+            Debugger::instance()+="STATE: PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY";
+
+            NEXT_STATE.type = type::PLAYER_SELECTING_ACTION;
         }
         break;
         default:

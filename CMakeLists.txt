@@ -37,6 +37,7 @@ set(SRC_SYSTEMS
     src/systems/logic/logic.cpp
     src/systems/movement/movement.cpp
     src/systems/combat/damage.cpp
+    src/systems/combat/buff_debuff.cpp
 )
 
 set(SRC_GAME ${SRC_MAIN} ${SRC_ENGINE} ${SRC_UTILS} ${SRC_SYSTEMS})

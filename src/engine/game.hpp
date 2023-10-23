@@ -15,6 +15,7 @@
 #include "systems/logic/logic.hpp"
 #include "systems/combat/damage.hpp"
 #include "systems/movement/movement.hpp"
+#include "systems/combat/buff_debuff.hpp"
 
 class DungeonThing : public olc::PixelGameEngine
 {

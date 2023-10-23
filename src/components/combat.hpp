@@ -72,6 +72,9 @@ struct has_action{
     entt::entity action;
 };
 
+struct heal{
+    int amount;
+};
 
 struct damage{
     int amount;

@@ -20,7 +20,7 @@ class Debugger
         void Print(olc::PixelGameEngine *pge)
         {
             auto [winx, winy] = pge->GetWindowSize();
-            winx *= 0.80;
+            winx *= 0.10;
             winy *= 0.80;
             int offs = 1;
             pge->DrawString(winx, winy, "-----------------------",olc::WHITE);

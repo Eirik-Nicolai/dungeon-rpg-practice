@@ -3,6 +3,8 @@
 
 void on_damage(entt::registry &reg, entt::entity &actor, entt::entity &target, entt::entity &action)
 {
+
+    //std::cout << "target" << std::endl;
     if(reg.all_of<damage>(action))
     {
         auto dmg = reg.get<damage>(action);
@@ -31,8 +33,7 @@ int get_actual_damage(int &amount, entt::registry &reg, entt::entity &actor, ent
 
 void apply_debuff(entt::registry &reg, entt::entity &debuff, entt::entity &target)
 {
-    reg.patch<affects>(debuff, [&](auto &aff){
-        std::cout << "adding target" << std::endl;
-       aff.targets.emplace_back(target);
-    });
+    auto &aff = reg.get<affects>(debuff);
+    aff.targets.emplace_back(target);
+
 }
