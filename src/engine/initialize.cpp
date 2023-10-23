@@ -70,6 +70,21 @@ void DungeonThing::on_load_init()
     m_reg.emplace<visual>(reg_attack, "ATK");
     m_reg.emplace<damage>(reg_attack, 30);
 
+    auto bleed = m_reg.create();
+    m_reg.emplace<_debuff>(bleed);
+    m_reg.emplace<visual>(bleed, "BLEEDING");
+    m_reg.emplace<damage>(bleed, 10);
+    m_reg.emplace<tick>(bleed, 2);
+    m_reg.emplace<affects>(bleed);
+
+    auto bleed_attack = m_reg.create();
+    m_reg.emplace<visual>(bleed_attack, "Bleed atk");
+    m_reg.emplace<adds_debuff>(bleed_attack, bleed);
+
+    auto does_multiple_things_attack = m_reg.create();
+    m_reg.emplace<visual>(does_multiple_things_attack, "ATK MANY");
+    m_reg.emplace<action_children>(does_multiple_things_attack, std::vector<entt::entity>{reg_attack, bleed_attack});
+
     // m_reg.emplace<skill_list>(player, std::vector<skill>{
     //     poison{{50,"Poison"},
     //     10
@@ -78,12 +93,11 @@ void DungeonThing::on_load_init()
 
     m_player = player;
 
-
     TextItem attack{
         "ATTACK",
         [=]{
             NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-            m_intended_action = reg_attack;
+            m_intended_action = does_multiple_things_attack;
         }
     };
     TextItem skill{

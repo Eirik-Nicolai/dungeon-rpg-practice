@@ -16,6 +16,7 @@ void on_damage(entt::registry &reg, entt::entity &actor, entt::entity &target, e
 
     if(reg.all_of<adds_debuff>(action))
     {
+        std::cout << "adding debuff" << std::endl;
         apply_debuff(reg, reg.get<adds_debuff>(action).debuff, target);
     }
 }

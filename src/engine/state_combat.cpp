@@ -85,10 +85,26 @@ void DungeonThing::STATE_COMBAT(float dt)
             //m_targetmenu.clear();
 
             m_targetmenu = TargetMenu([&]{
-                m_movequeue_player.emplace(combat_action{
-                    .action = m_intended_action,
-                    .target = m_targetmenu.GetSelected()
+                auto target = m_targetmenu.GetSelected();
+                if (m_reg.any_of<action_children>(m_intended_action))
+                {
+                    auto children = m_reg.get<action_children>(m_intended_action).children;
+                    for(auto a : children)
+                    {
+                        std::cout << "adding " << m_reg.get<visual>(a).name << std::endl;
+                        m_movequeue_player.emplace(combat_action{
+                            .action = a,
+                            .target = target
+                        });
+                    }
+                }
+                else
+                {
+                    m_movequeue_player.emplace(combat_action{
+                        .action = m_intended_action,
+                        .target = target
                     });
+                }
                 NEXT_STATE.type = type::ALLY_SELECTING_ACTION;
             }, goblin_mage, goblin_big);
             m_reg.ctx().emplace<CombatState>(-1);
@@ -166,17 +182,22 @@ void DungeonThing::STATE_COMBAT(float dt)
         {
             Debugger::instance()+="STATE: PERFORMING_COMBAT_ACTIONS_PLAYER";
 
-            while(!m_movequeue_player.empty())
+            if(m_movequeue_player.empty())
             {
-                auto [action, target] = m_movequeue_player.front();
-                on_damage(m_reg, m_player, target, action);
-                m_movequeue_player.pop();
+                if(delay_for(1, dt))
+                {
+                    NEXT_STATE.type = type::PERFORMING_COMBAT_ACTIONS_ALLIES;
+                }
             }
-            if(delay_for(1, dt))
+            else
             {
-                NEXT_STATE.type = type::PERFORMING_COMBAT_ACTIONS_ALLIES;
+                if(delay_for(1, dt))
+                {
+                    auto [action, target] = m_movequeue_player.front();
+                    on_damage(m_reg, m_player, target, action);
+                    m_movequeue_player.pop();
+                }
             }
-
             on_render_combat();
         }
         break;
@@ -217,14 +238,15 @@ void DungeonThing::STATE_COMBAT(float dt)
         {
             Debugger::instance()+="STATE: PERFORMING_BUFF_DEBUFF_ACTIONS_ALLIES";
             auto allies = m_reg.view<_ally>();
-            on_buff_debuff_ally(m_reg, allies);
+            //on_buff_debuff_ally(m_reg, allies);
             NEXT_STATE.type = type::PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY;
         }
         break;
         case type::PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY:
         {
             Debugger::instance()+="STATE: PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY";
-
+            auto enemy = m_reg.view<_enemy>();
+            on_buff_debuff_enemy(m_reg, enemy);
             NEXT_STATE.type = type::PLAYER_SELECTING_ACTION;
         }
         break;

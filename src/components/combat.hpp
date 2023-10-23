@@ -49,6 +49,10 @@ struct stats{
 struct _action
 {};
 
+struct action_children{
+    std::vector<entt::entity> children;
+};
+
 struct _debuff{};
 struct _buff{};
 
