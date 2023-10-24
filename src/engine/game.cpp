@@ -12,30 +12,75 @@ DungeonThing::DungeonThing()
 
     TextItem resume{
         "RESUME",
-        [this]{
-            NEXT_STATE = {state::WALKING, type::FROM_PAUSED_TRANSITION};
+        [&]{
+            NEXT_STATE.state = state::WALKING;
+            NEXT_STATE.type = type::FREEROAM;
         }
     };
-    TextItem options{
-        "OPTIONS",
+    TextItem inventory{
+        "INVENTORY",
+        [&]{
+            m_curr_menu = 1;
+            NEXT_STATE.type = type::INVENTORY;
+        }
+    };
+    TextItem equipment{
+        "EQUIPMENT",
+        [&]{
+            // TODO menu list of equipment types
+            // and then list of currently held items
+            m_curr_menu = 2;
+            NEXT_STATE.type = type::EQUIPMENT;
+        }
+    };
+    TextItem othershit{
+        "SOME OTHER SHIT",
         []{
-            std::cout << "OPTIONS NOT IMPL" << std::endl;
+            std::cout << "SOME SHIT NOT IMPL" << std::endl;
         }
     };
-    TextItem exit{
-        "EXIT",
-        []{
-            std::cout << "EXIT NOT IMPL" << std::endl;
+    m_pausemenus.emplace_back(PauseMenu(resume, inventory, equipment, othershit));
+
+    TextItem USE{
+        "USE ITEM",
+        [&]{
+            std::cout << "USE ITEM NOT IMPL" << std::endl;
         }
     };
-    m_pausemenus.emplace_back(PauseMenu(resume, options, exit));
+    TextItem INSPECT{
+        "INSPECT",
+        [&]{
+            std::cout << "INSPECT NOT IMPL" << std::endl;
+        }
+    };
+    TextItem BACK{
+        "BACK",
+        [&]{
+            m_curr_menu = 0;
+            NEXT_STATE.type = type::OVERVIEW;
+        }};
+
+    m_pausemenus.emplace_back(PauseMenu(USE, INSPECT, BACK));
+    TextItem EQUIP{
+        "EQUIP ITEM",
+        [&]{
+            std::cout << "EQUIP ITEM NOT IMPL" << std::endl;
+        }
+    };
+    TextItem INFO{
+        "INFO",
+        [&]{
+            std::cout << "INFO NOT IMPL" << std::endl;
+        }};
+    m_pausemenus.emplace_back(PauseMenu(EQUIP, INFO, BACK));
+
 }
 
 bool DungeonThing::OnUserCreate()
 {
     on_load_init();
 
-    CURR_STATE = {GameState::state::WALKING, GameStateType::type::FREEROAM};
+    CURR_STATE = {GameState::state::PAUSED, GameStateType::type::INIT_PAUSED};
     NEXT_STATE = CURR_STATE;
 
     m_fElapsedTimeSinceTick = 0;
@@ -58,8 +103,7 @@ bool DungeonThing::OnUserUpdate(float dt)
 
         case state::PAUSED:
         {
-            on_userinput_paused();
-            on_render_paused();
+            STATE_PAUSE(dt);
         }
         break;
 
@@ -75,13 +119,11 @@ bool DungeonThing::OnUserUpdate(float dt)
         }
     }
 
-    Debugger::instance().Print(this);
+    Debugger::instance().Print(this, 0.80, 0.80);
     CURR_STATE = NEXT_STATE;
 
     return true;
 }
-
-
 
 
 bool DungeonThing::delay_for(float delay, float dt)
@@ -93,4 +135,19 @@ bool DungeonThing::delay_for(float delay, float dt)
     }
     m_elapsed_transition_time+= dt;
     return false;
+}
+
+std::string DungeonThing::get_name(entt::entity &ent)
+{
+    if(auto vis = m_reg.try_get<visual>(ent);m_reg.try_get<visual>(ent) != nullptr)
+    {
+        return vis->name;
+    }
+    return "UNNAMED_ENTITY";
+}
+
+
+int DungeonThing::get_percentage(int part, int whole)
+{
+    return 100*((float)part/(float)whole);
 }

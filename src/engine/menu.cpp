@@ -25,11 +25,31 @@ void Menu::Select()
 
 int Menu::ListSize() {return list_items.size();}
 
-PauseMenu::PauseMenu(TextItem &resume, TextItem &option, TextItem &exit) : Menu()
+
+PauseMenu::PauseMenu(TextItem &a) : Menu()
 {
-  list_items.emplace_back(resume);
-  list_items.emplace_back(option);
-  list_items.emplace_back(exit);
+  list_items.emplace_back(a);
+}
+
+PauseMenu::PauseMenu(TextItem &a, TextItem &b) : Menu()
+{
+  list_items.emplace_back(a);
+  list_items.emplace_back(b);
+}
+
+PauseMenu::PauseMenu(TextItem &a, TextItem &b, TextItem &c) : Menu()
+{
+  list_items.emplace_back(a);
+  list_items.emplace_back(b);
+  list_items.emplace_back(c);
+}
+
+PauseMenu::PauseMenu(TextItem &a, TextItem &b, TextItem &c, TextItem &d) : Menu()
+{
+  list_items.emplace_back(a);
+  list_items.emplace_back(b);
+  list_items.emplace_back(c);
+  list_items.emplace_back(d);
 }
 
 

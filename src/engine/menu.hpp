@@ -11,15 +11,13 @@
 #include "utils/debug.hpp"
 
 #include "components/combat.hpp"
+#include "components/globals.hpp"
+#include "components/equipment.hpp"
 
 struct TextItem
 {
   std::string text;
   std::function<void(void)> action;
-};
-
-class MenuMenu {
-
 };
 
 class Menu {
@@ -41,10 +39,29 @@ class Menu {
 class PauseMenu : public Menu {
   public:
     PauseMenu() = default;
+    PauseMenu(TextItem&, TextItem&, TextItem&, TextItem&);
     PauseMenu(TextItem&, TextItem&, TextItem&);
+    PauseMenu(TextItem&, TextItem&);
+    PauseMenu(TextItem&);
 
   public:
 
+};
+
+class EquipmentMenu : public Menu {
+  public:
+    EquipmentMenu() = default;
+    EquipmentMenu(std::function<void(void)>);
+
+  public:
+    void LoadEquipment(entt::registry&, EquipmentState&);
+    entt::entity ScrollLeft();
+    entt::entity ScrollRight();
+
+  private:
+    int curr_menu;
+
+    Menu m_menus[3];
 };
 
 class CombatMenu : public Menu {

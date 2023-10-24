@@ -20,13 +20,23 @@ void DungeonThing::STATE_PAUSE(float dt)
         case type::OVERVIEW:
         {
             Debugger::instance()+="STATE: OVERVIEW";
+            on_userinput_paused();
             on_render_paused();
         }
         break;
         case type::INVENTORY:
         {
             Debugger::instance()+="STATE: INVENTORY";
+            on_userinput_paused();
+            on_render_paused();
 
+        }
+        break;
+        case type::EQUIPMENT:
+        {
+            Debugger::instance()+="STATE: EQUIPMENT";
+            on_userinput_paused();
+            on_render_paused();
         }
         break;
         case type::ITEM_SELECTED:

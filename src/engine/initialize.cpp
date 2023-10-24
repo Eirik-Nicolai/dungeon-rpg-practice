@@ -114,6 +114,49 @@ void DungeonThing::on_load_init()
     m_reg.emplace<moveTick>(player, 0.0f);
 
     // INVENTORY
+    auto helmet = m_reg.create();
+    m_reg.emplace<_helmet>(helmet);
+    m_reg.emplace<visual>(helmet, "HOOD");
+    m_reg.emplace<armour>(helmet, 1);
+
+    auto torso = m_reg.create();
+    m_reg.emplace<_torso>(torso);
+    m_reg.emplace<visual>(torso, "SWEATER");
+    m_reg.emplace<armour>(torso, 1);
+
+    auto legs = m_reg.create();
+    m_reg.emplace<_legs>(legs);
+    m_reg.emplace<visual>(legs, "TROUSERS");
+    m_reg.emplace<armour>(legs, 1);
+
+    auto mainhand = m_reg.create();
+    m_reg.emplace<_main_hand>(mainhand);
+    m_reg.emplace<visual>(mainhand, "SWORD");
+    m_reg.emplace<force>(mainhand, 1, 1);
+
+    auto offhand = m_reg.create();
+    m_reg.emplace<_off_hand>(offhand);
+    m_reg.emplace<visual>(offhand, "SHIELD");
+    m_reg.emplace<armour>(offhand, 1);
+
+    auto ear = m_reg.create();
+    m_reg.emplace<_accessory_head>(ear);
+    m_reg.emplace<visual>(ear, "EARRING");
+    m_reg.emplace<willpower>(ear, 1);
+
+    auto finger = m_reg.create();
+    m_reg.emplace<_accessory_hand>(finger);
+    m_reg.emplace<visual>(finger, "RING");
+    m_reg.emplace<mind>(finger, 1, 1);
+
+    auto &state = m_reg.ctx().get<EquipmentState>();
+    state.head = helmet;
+    state.torso = torso;
+    state.legs = legs;
+    state.main_hand = mainhand;
+    state.off_hand = offhand;
+    state.jewellery_ears = ear;
+    state.jewellery_finger = finger;
 
 
     // COMBAT
@@ -122,6 +165,7 @@ void DungeonThing::on_load_init()
     m_reg.emplace<health>(player, 100, 100);
     m_reg.emplace<mana>(player, 100, 100);
     m_reg.emplace<armour>(player, 0, 0);
+    m_reg.emplace<willpower>(player, 0, 0);
     m_reg.emplace<force>(player, 2, 2);
     m_reg.emplace<mind>(player, 2, 2);
     m_reg.emplace<affected>(player);

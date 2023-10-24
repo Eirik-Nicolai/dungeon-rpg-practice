@@ -22,9 +22,11 @@ set(SRC_ENGINE
     src/engine/keypress.cpp
     src/engine/initialize.cpp
     src/engine/state_combat.cpp
+    src/engine/state_paused.cpp
     src/engine/state_walking.cpp
     src/engine/rendering/render.cpp
     src/engine/rendering/render_combat.cpp
+    src/engine/rendering/render_paused.cpp
     src/engine/rendering/render_walking.cpp
 )
 

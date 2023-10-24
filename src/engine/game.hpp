@@ -10,6 +10,8 @@
 #include "types_and_defines.hpp"
 #include "components/combat.hpp"
 #include "components/globals.hpp"
+#include "components/equipment.hpp"
+#include "components/rendering.hpp"
 
 #include "systems/AI/ai.hpp"
 #include "systems/logic/logic.hpp"
@@ -36,7 +38,15 @@ class DungeonThing : public olc::PixelGameEngine
         void on_load_combat();
 
         void on_render_walking();
+
+
         void on_render_paused();
+        void on_render_paused_stats();
+        void on_render_paused_overview();
+        void on_render_paused_inventory();
+        void on_render_paused_equipment();
+
+
         void on_render_combat();
 
         void on_render_transition_to_walking_from_combat(float dt);
@@ -51,11 +61,6 @@ class DungeonThing : public olc::PixelGameEngine
     private:
         entt::registry m_reg;
         void render_windows();
-
-        std::vector<CombatMenu> m_combatmenus;
-        entt::entity m_intended_action;
-        TargetMenu m_targetmenu;
-        std::vector<PauseMenu> m_pausemenus;
 
         int m_curr_menu;
 
@@ -72,12 +77,33 @@ class DungeonThing : public olc::PixelGameEngine
         float m_transition_time;
         float m_elapsed_transition_time;
 
+        // COMBAT
         std::queue<combat_action> m_movequeue_player;
         std::queue<combat_action> m_movequeue_allies;
         std::queue<combat_action> m_movequeue_enemy;
+        std::vector<CombatMenu> m_combatmenus;
+        entt::entity m_intended_action;
+        TargetMenu m_targetmenu;
 
-    private:
+        // EQUIPMENT AND INVENTORY
+        std::vector<PauseMenu> m_pausemenus;
+        std::vector<EquipmentMenu> m_equipment;
+
+    public:
         std::vector<std::string> m_debug;
+        std::string get_name(entt::entity&);
+        int get_percentage(int part, int whole);
+
+        template <typename component>
+        bool tryget_component(entt::entity &ent, component &comp)
+        {
+            if(auto getcomp = m_reg.try_get<component>(ent);m_reg.try_get<component>(ent) != nullptr)
+            {
+                comp = (*getcomp);
+                return true;
+            }
+            return false;
+        }
 };
 
 

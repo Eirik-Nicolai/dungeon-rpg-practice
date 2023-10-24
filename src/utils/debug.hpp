@@ -17,11 +17,11 @@ class Debugger
             static Debugger instance;
             return instance;
         }
-        void Print(olc::PixelGameEngine *pge)
+        void Print(olc::PixelGameEngine *pge, float posx, float posy)
         {
             auto [winx, winy] = pge->GetWindowSize();
-            winx *= 0.10;
-            winy *= 0.80;
+            winx *= posx;
+            winy *= posy;
             int offs = 1;
             pge->DrawString(winx, winy, "-----------------------",olc::WHITE);
             for (auto &s: debug_lines)

@@ -54,6 +54,7 @@ struct GameStateType
     INIT_PAUSED = 5001,
     OVERVIEW,
     INVENTORY,
+    EQUIPMENT,
     ITEM_SELECTED,
     // -----------------------------
 };

@@ -70,6 +70,23 @@ void DungeonThing::on_userinput_paused()
     {
         m_pausemenus[m_curr_menu].Select();
     }
+
+
+    // DEBUG
+
+    if(GetKey(olc::Key::Z).bReleased)
+    {
+        m_reg.patch<health>(m_player, [](auto &h){
+            h.curr -= 15;
+        });
+    }
+
+    if(GetKey(olc::Key::X).bReleased)
+    {
+        m_reg.patch<health>(m_player, [](auto &h){
+           h.curr += 15;
+        });
+    }
 }
 
 

@@ -74,13 +74,12 @@ void apply_debuff(entt::registry &reg, entt::entity &debuff, entt::entity &targe
     reg.patch<affected>(target, [&](auto &aff){
         for(auto e : aff.effects)
         {
-            if(reg.get<visual>(e).name == reg.get<visual>(debuff).name)
+            if(e == debuff) // TODO check if this works as intended
             {
                 reg.get<tick>(e).rounds = reg.get<tick>(debuff).rounds;
                 return; //TODO test that this works as intended
             }
         }
-        std::cout << "Adding debuff " <<reg.get<visual>(debuff).name << std::endl;
         aff.effects.emplace_back(debuff);
     });
 }

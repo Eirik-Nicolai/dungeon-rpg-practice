@@ -12,4 +12,14 @@ struct combat_appearence{
     std::string c;
 };
 
+struct boss_appearence{
+    std::string c;
+};
+
+struct visual{
+    std::string name;
+    std::string char_repr;
+    short colour;
+};
+
 #endif // RENDERING_H_

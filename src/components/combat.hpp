@@ -136,9 +136,6 @@ struct cost{
     int other;
 };
 
-struct visual{
-    std::string name;
-};
 struct adds_debuff{
     entt::entity debuff;
 };
