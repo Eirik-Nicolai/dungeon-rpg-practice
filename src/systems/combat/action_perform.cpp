@@ -46,7 +46,7 @@ int get_actual_damage(int &amount, entt::registry &reg, entt::entity &actor, ent
 {
     // get damage with actor multiplier
     auto [max, curr] = reg.get<force>(actor);
-    int given_damage = amount + (amount*(curr/100));
+    int given_damage = amount + (amount*(curr/10));
 
     given_damage *= get_raw_dmg_multiplier(reg, actor);
 

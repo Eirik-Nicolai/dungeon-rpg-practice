@@ -115,37 +115,37 @@ void DungeonThing::on_load_init()
 
     // INVENTORY
     auto helmet = m_reg.create();
-    m_reg.emplace<_helmet>(helmet);
+    m_reg.emplace<equipment_type>(helmet, equiptype::HEAD);
     m_reg.emplace<visual>(helmet, "HOOD");
     m_reg.emplace<armour>(helmet, 1);
 
     auto torso = m_reg.create();
-    m_reg.emplace<_torso>(torso);
+    m_reg.emplace<equipment_type>(torso, equiptype::TORSO);
     m_reg.emplace<visual>(torso, "SWEATER");
     m_reg.emplace<armour>(torso, 1);
 
     auto legs = m_reg.create();
-    m_reg.emplace<_legs>(legs);
+    m_reg.emplace<equipment_type>(legs, equiptype::LEGS);
     m_reg.emplace<visual>(legs, "TROUSERS");
     m_reg.emplace<armour>(legs, 1);
 
     auto mainhand = m_reg.create();
-    m_reg.emplace<_main_hand>(mainhand);
+    m_reg.emplace<equipment_type>(mainhand, equiptype::MAINHAND);
     m_reg.emplace<visual>(mainhand, "SWORD");
     m_reg.emplace<force>(mainhand, 1, 1);
 
     auto offhand = m_reg.create();
-    m_reg.emplace<_off_hand>(offhand);
+    m_reg.emplace<equipment_type>(offhand, equiptype::OFFHAND);
     m_reg.emplace<visual>(offhand, "SHIELD");
     m_reg.emplace<armour>(offhand, 1);
 
     auto ear = m_reg.create();
-    m_reg.emplace<_accessory_head>(ear);
+    m_reg.emplace<equipment_type>(ear, equiptype::ACCESS_HEAD);
     m_reg.emplace<visual>(ear, "EARRING");
     m_reg.emplace<willpower>(ear, 1);
 
     auto finger = m_reg.create();
-    m_reg.emplace<_accessory_hand>(finger);
+    m_reg.emplace<equipment_type>(finger, equiptype::ACCESS_FINGER);
     m_reg.emplace<visual>(finger, "RING");
     m_reg.emplace<mind>(finger, 1, 1);
 
@@ -158,20 +158,31 @@ void DungeonThing::on_load_init()
     state.jewellery_ears = ear;
     state.jewellery_finger_left = finger;
 
+    auto pants = m_reg.create();
+    m_reg.emplace<equipment_type>(pants, equiptype::LEGS);
+    m_reg.emplace<visual>(pants, "PANTS");
+
+    auto ring = m_reg.create();
+    m_reg.emplace<equipment_type>(ring, equiptype::ACCESS_FINGER);
+    m_reg.emplace<visual>(ring, "RING");
+    m_reg.emplace<willpower>(ring, 110, 110);
+
     auto skull = m_reg.create();
-    m_reg.emplace<_helmet>(skull);
+    m_reg.emplace<equipment_type>(skull, equiptype::HEAD);
     m_reg.emplace<visual>(skull, "SKULL");
     m_reg.emplace<mind>(skull, 1, 1);
 
     auto horns = m_reg.create();
-    m_reg.emplace<_helmet>(horns);
+    m_reg.emplace<equipment_type>(horns, equiptype::HEAD);
     m_reg.emplace<visual>(horns, "HORNED HELMET");
     m_reg.emplace<force>(horns, 1, 1);
     m_reg.emplace<armour>(horns, 2, 2);
 
     auto &invstate = m_reg.ctx().get<InventoryState>();
-    invstate.equipables[INV_INDEX_HEAD].emplace_back(skull);
-    invstate.equipables[INV_INDEX_HEAD].emplace_back(horns);
+    invstate.equipables[equiptype::HEAD].emplace_back(skull);
+    invstate.equipables[equiptype::HEAD].emplace_back(horns);
+    invstate.equipables[equiptype::LEGS].emplace_back(pants);
+    invstate.equipables[equiptype::ACCESS_FINGER].emplace_back(ring);
 
     // COMBAT
     m_reg.emplace<_ally>(player);

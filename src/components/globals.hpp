@@ -39,16 +39,6 @@ struct EquipmentState{
     entt::entity jewellery_necklace;
 };
 
-constexpr int INV_INDEX_HEAD = 0;
-constexpr int INV_INDEX_TORSO = 1;
-constexpr int INV_INDEX_LEGS = 2;
-constexpr int INV_INDEX_MAINHAND = 3;
-constexpr int INV_INDEX_OFFHAND = 4;
-constexpr int INV_INDEX_FINGERLEFT = 5;
-constexpr int INV_INDEX_FINGERRIGHT = 6;
-constexpr int INV_INDEX_NECKLACE = 7;
-constexpr int INV_INDEX_EARS = 8;
-
 //FIXME maybe move movequeue to here
 struct CombatState
 {

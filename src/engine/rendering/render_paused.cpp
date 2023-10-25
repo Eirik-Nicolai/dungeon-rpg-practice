@@ -156,50 +156,58 @@ void DungeonThing::on_render_paused_equipment()
     //TODO remember to change
     switch(m_current_selected_equipment_type)
     {
-        case INV_INDEX_HEAD:
+        case equiptype::HEAD:
             curr_selected = equip.head;
             x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS;
             y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
             break;
-        case INV_INDEX_TORSO:
+        case equiptype::TORSO:
             curr_selected = equip.torso;
             x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS;
             y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS;
             break;
-        case INV_INDEX_LEGS:
+        case equiptype::LEGS:
             curr_selected = equip.legs;
             x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS;
             y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
             break;
-        case INV_INDEX_MAINHAND:
+        case equiptype::MAINHAND:
             curr_selected = equip.main_hand;
             x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
             y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS;
             break;
-        case INV_INDEX_OFFHAND:
+        case equiptype::OFFHAND:
             curr_selected = equip.off_hand;
             x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
             y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS;
             break;
-        case INV_INDEX_EARS:
-            curr_selected = equip.jewellery_ears;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
+        case equiptype::ACCESS_HEAD:
+            if(m_equip_head_left)
+            {
+                curr_selected = equip.jewellery_necklace;
+                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
+                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
+            }
+            else
+            {
+                curr_selected = equip.jewellery_ears;
+                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
+                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
+            }
             break;
-        case INV_INDEX_NECKLACE:
-            curr_selected = equip.jewellery_necklace;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
-            break;
-        case INV_INDEX_FINGERLEFT:
-            curr_selected = equip.jewellery_finger_left;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
-            break;
-        case INV_INDEX_FINGERRIGHT:
-            curr_selected = equip.jewellery_finger_right;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
+        case equiptype::ACCESS_FINGER:
+            if(m_equip_finger_left)
+            {
+                curr_selected = equip.jewellery_finger_left;
+                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
+                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
+            }
+            else
+            {
+                curr_selected = equip.jewellery_finger_right;
+                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
+                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
+            }
             break;
         default:
             throw std::runtime_error("equipment index not recognized");
@@ -241,7 +249,6 @@ void DungeonThing::on_render_paused_inventory()
                        name, olc::RED, 3);
             DrawString(winx_main*0.1-GetStringLength("-> ", 3),(equipment_win_y*0.2)+offs*i,
                        "->", olc::WHITE, 3);
-
         }
         else
         {

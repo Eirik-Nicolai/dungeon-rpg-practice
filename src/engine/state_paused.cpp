@@ -21,50 +21,57 @@ void DungeonThing::STATE_PAUSE(float dt)
             m_equipment_menu.AddItemLeft(TextItemOnScroll{
                 get_name(equipment.jewellery_necklace, "No necklace"),
                 [&](){
-                    return INV_INDEX_NECKLACE;
+                    m_equip_head_left = true;
+                    return equiptype::ACCESS_HEAD;
 
                 }});
             m_equipment_menu.AddItemLeft(TextItemOnScroll{
                 get_name(equipment.main_hand, "No main hand"),
                 [&](){
-                    return INV_INDEX_MAINHAND;
+                    return equiptype::MAINHAND;
                 }});
-            // m_equipment_menu.AddItemLeft(TextItemOnScroll{
-            //     get_name(equipment.head),
-            //     [&](){
-            //         m_current_selected_equipment_type = equipment.head;
-            //         NEXT_STATE.type = type::ITEM_SELECTED;
-            //     }});
+            m_equipment_menu.AddItemLeft(TextItemOnScroll{
+                get_name(equipment.jewellery_finger_left, "No left finger"),
+                [&](){
+                    m_equip_finger_left = true;
+                    return equiptype::ACCESS_FINGER;
+                }});
             m_equipment_menu.AddItemMiddle(TextItemOnScroll{
                 get_name(equipment.head, "No headpiece"),
                 [&](){
-                    return INV_INDEX_HEAD;
+                    return equiptype::HEAD;
                 }});
             m_equipment_menu.AddItemMiddle(TextItemOnScroll{
                 get_name(equipment.torso, "No torso"),
                 [&](){
-                    return  INV_INDEX_TORSO;
+                    return  equiptype::TORSO;
                 }});
             m_equipment_menu.AddItemMiddle(TextItemOnScroll{
                 get_name(equipment.legs, "No trousers"),
                 [&](){
-                    return  INV_INDEX_LEGS;
+                    return  equiptype::LEGS;
                 }});
             m_equipment_menu.AddItemRight(TextItemOnScroll{
                 get_name(equipment.jewellery_ears, "No ear piece"),
                 [&](){
-                    return  INV_INDEX_EARS;
+                    m_equip_head_left = false;
+                    return  equiptype::ACCESS_HEAD;
                 }});
             m_equipment_menu.AddItemRight(TextItemOnScroll{
                 get_name(equipment.off_hand, "No offhand"),
                 [&](){
-                    return  INV_INDEX_OFFHAND;
+                    return  equiptype::OFFHAND;
                 }});
-
+            m_equipment_menu.AddItemLeft(TextItemOnScroll{
+                get_name(equipment.jewellery_finger_right, "No right finger"),
+                [&](){
+                    m_equip_finger_left = false;
+                    return equiptype::ACCESS_FINGER;
+                }});
 
             m_transition_progress = 0.0;
             m_elapsed_transition_time = 0.0f;
-            NEXT_STATE.type = type::OVERVIEW;;
+            NEXT_STATE.type = type::OVERVIEW;
         }
         break;
         case type::OVERVIEW:
@@ -76,12 +83,11 @@ void DungeonThing::STATE_PAUSE(float dt)
         break;
         case type::INIT_INVENTORY:
         {
-            std::cout << "Item seelcted state" << std::endl;
             Debugger::instance()+="STATE: INIT_INVENTORY";
             auto inv = m_reg.ctx().get<InventoryState>();
-            for(int i = 0; i < 9; ++i)
+            for(int i = 0; i < NUM_EQUIPTYPES; ++i)
             {
-                m_inventory_list = inv.equipables[i];
+                m_inventory_list.insert(m_inventory_list.end(),inv.equipables[i].begin(), inv.equipables[i].end());
             }
             m_inventory_menu = InventoryMenu();
             for(auto e : m_inventory_list)
@@ -107,7 +113,6 @@ void DungeonThing::STATE_PAUSE(float dt)
         break;
         case type::ITEM_SELECTED:
         {
-            std::cout << "Item seelcted state" << std::endl;
             Debugger::instance()+="STATE: ITEM_SELECTED";
             auto inv = m_reg.ctx().get<InventoryState>();
             m_inventory_list = inv.equipables[m_current_selected_equipment_type];

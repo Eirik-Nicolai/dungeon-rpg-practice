@@ -129,6 +129,21 @@ void DungeonThing::on_userinput_paused()
             std::cout << "PAUSE TYPE NOT RECOGNISED" << std::endl;
     }
 
+    if(GetKey(olc::Key::ESCAPE).bReleased)
+    {
+        switch(CURR_STATE.type)
+        {
+            case type::OVERVIEW:
+                NEXT_STATE.state = state::WALKING;
+                NEXT_STATE.type = type::FREEROAM;
+                break;
+            default:
+                NEXT_STATE.type = type::INIT_PAUSED;
+
+
+        }
+    }
+
 
     // DEBUG
 

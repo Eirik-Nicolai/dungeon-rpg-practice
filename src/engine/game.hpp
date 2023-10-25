@@ -100,7 +100,10 @@ class DungeonThing : public olc::PixelGameEngine
 
         std::vector<entt::entity> get_inventory_of_equip_type(entt::entity&);
         void set_equipment(const entt::entity &);
-        int get_equipment_indx(const entt::entity &);
+
+        //TODO a bit grim doing it like this
+        bool m_equip_finger_left;
+        bool m_equip_head_left;
 
         template <typename component>
         bool tryget_component(entt::entity &ent, component &comp)
@@ -111,6 +114,30 @@ class DungeonThing : public olc::PixelGameEngine
                 return true;
             }
             return false;
+        }
+
+        template <typename component>
+        bool tryget_component(const entt::entity &ent, component &comp)
+        {
+            if(auto getcomp = m_reg.try_get<component>(ent);m_reg.try_get<component>(ent) != nullptr)
+            {
+                comp = (*getcomp);
+                return true;
+            }
+            return false;
+        }
+
+        //TODO check reference
+        template <typename component>
+        component get(entt::entity e)
+        {
+            return m_reg.get<component>(e);
+        }
+
+        template <typename component>
+        const component cget(entt::entity e) const
+        {
+            return m_reg.get<component>(e);
         }
 };
 

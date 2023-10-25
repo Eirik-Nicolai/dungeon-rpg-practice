@@ -11,6 +11,8 @@ DungeonThing::DungeonThing()
     m_elapsed_transition_time = 1;
 
     m_current_selected_equipment_type = 0;
+    m_equip_finger_left = false;
+    m_equip_head_left = false;
 
     TextItemOnSelect resume{
         "RESUME",
@@ -23,7 +25,7 @@ DungeonThing::DungeonThing()
         "INVENTORY",
         [&]{
             m_curr_menu = 1;
-            //NEXT_STATE.type = type::INVENTORY;
+            NEXT_STATE.type = type::INIT_INVENTORY;
         }
     };
     TextItemOnSelect equipment{
@@ -142,9 +144,10 @@ bool DungeonThing::delay_for(float delay, float dt)
 
 std::string DungeonThing::get_name(const entt::entity &ent, std::string ret)
 {
-    if(auto vis = m_reg.try_get<visual>(ent);m_reg.try_get<visual>(ent) != nullptr)
+    visual v;
+    if(tryget_component(ent, v))
     {
-        return vis->name;
+        return v.name;
     }
     return ret;
 }
@@ -152,58 +155,38 @@ std::string DungeonThing::get_name(const entt::entity &ent, std::string ret)
 void DungeonThing::set_equipment(const entt::entity &e)
 {
     auto &equipment = m_reg.ctx().get<EquipmentState>();
-    std::cout << get_name(e) << std::endl;
-    switch (get_equipment_indx(e))
+    switch (get<equipment_type>(e).type)
     {
-        case INV_INDEX_HEAD:
+        case equiptype::HEAD:
             equipment.head = e;
             break;
-        case INV_INDEX_TORSO:
+        case equiptype::TORSO:
             equipment.torso = e;
             break;
-        case INV_INDEX_LEGS:
+        case equiptype::LEGS:
             equipment.legs = e;
             break;
-        case INV_INDEX_MAINHAND:
+        case equiptype::MAINHAND:
             equipment.main_hand = e;
             break;
-        case INV_INDEX_OFFHAND:
+        case equiptype::OFFHAND:
             equipment.off_hand = e;
             break;
-        case INV_INDEX_NECKLACE:
-            equipment.jewellery_necklace = e;
+        case equiptype::ACCESS_FINGER:
+            if(m_equip_finger_left)
+                equipment.jewellery_finger_left = e;
+            else
+                equipment.jewellery_finger_right = e;
             break;
-        case INV_INDEX_FINGERLEFT:
-            equipment.jewellery_finger_left = e;
-            break;
-        case INV_INDEX_FINGERRIGHT:
-            equipment.jewellery_finger_right = e;
-            break;
-        case INV_INDEX_EARS:
-            equipment.jewellery_ears = e;
+        case equiptype::ACCESS_HEAD:
+            if(m_equip_head_left)
+                equipment.jewellery_finger_right = e;
+            else
+                equipment.jewellery_finger_right = e;
             break;
         default:
             throw std::runtime_error("equipment indx not recognised");
     }
-}
-
-int DungeonThing::get_equipment_indx(const entt::entity &e)
-{
-    if(m_reg.all_of<_helmet>(e))
-        return INV_INDEX_HEAD;
-    if(m_reg.all_of<_legs>(e))
-        return INV_INDEX_LEGS;
-    if(m_reg.all_of<_torso>(e))
-        return INV_INDEX_HEAD;
-    if(m_reg.all_of<_main_hand>(e))
-        return INV_INDEX_HEAD;
-    if(m_reg.all_of<_off_hand>(e))
-        return INV_INDEX_HEAD;
-    if(m_reg.all_of<_accessory_head>(e))
-        return INV_INDEX_HEAD;
-    if(m_reg.all_of<_accessory_hand>(e))
-        return INV_INDEX_HEAD;
-    return -1;
 }
 
 int DungeonThing::get_percentage(int part, int whole)
