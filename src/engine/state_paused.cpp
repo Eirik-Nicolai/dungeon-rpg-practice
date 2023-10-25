@@ -74,6 +74,28 @@ void DungeonThing::STATE_PAUSE(float dt)
             on_render_paused();
         }
         break;
+        case type::INIT_INVENTORY:
+        {
+            std::cout << "Item seelcted state" << std::endl;
+            Debugger::instance()+="STATE: INIT_INVENTORY";
+            auto inv = m_reg.ctx().get<InventoryState>();
+            for(int i = 0; i < 9; ++i)
+            {
+                m_inventory_list = inv.equipables[i];
+            }
+            m_inventory_menu = InventoryMenu();
+            for(auto e : m_inventory_list)
+            {
+                m_inventory_menu.AddItem(TextItemOnSelect{
+                    get_name(e),
+                    [=](){
+                        std::cout << "INV NOT IMPL" << std::endl;
+                        NEXT_STATE.type = type::INIT_PAUSED;
+                    }});
+            }
+            NEXT_STATE.type = type::INVENTORY;
+        }
+        break;
         case type::INVENTORY:
         {
             //std::cout << "invnentory" << std::endl;
@@ -100,17 +122,6 @@ void DungeonThing::STATE_PAUSE(float dt)
                     }});
             }
             NEXT_STATE.type = type::INVENTORY;
-        }
-        break;
-        // TODO change state to just be inventory
-        // since that's what this really is
-        case type::CHANGING_EQUIPMENT:
-        {
-            //std::cout << "chanign equipent" << std::endl;
-            Debugger::instance()+="STATE: CHANGING EQUIPMENT";
-            Debugger::instance()+="selected " + std::to_string(m_inventory_menu.curr_selected);
-            on_userinput_paused();
-            on_render_paused();
         }
         break;
         case type::EQUIPMENT:

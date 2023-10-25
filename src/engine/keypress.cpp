@@ -101,7 +101,6 @@ void DungeonThing::on_userinput_paused()
         }
         break;
         case ::type::INVENTORY:
-        case type::CHANGING_EQUIPMENT:
         {
             if (GetKey(olc::Key::W).bReleased)
             {

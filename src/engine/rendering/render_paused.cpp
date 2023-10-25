@@ -44,7 +44,6 @@ void DungeonThing::on_render_paused()
             on_render_paused_equipment();
             break;
         case type::INVENTORY:
-        case type::CHANGING_EQUIPMENT: //TODO remove
             on_render_paused_inventory();
             break;
         default:
