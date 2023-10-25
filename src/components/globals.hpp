@@ -10,6 +10,9 @@
 //     float m_transition_time;
 //     float m_elapsed_transition_time;
 // };
+
+struct _player{};
+
 struct MenuState
 {
     int m_curr_menu;

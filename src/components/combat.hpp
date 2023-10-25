@@ -105,8 +105,16 @@ struct willpower_adder{
     int amount;
 };
 
+enum class dmg_type {PURE=0, MAGICAL, PHYSICAL};
+
+struct damage{
+    int amount;
+    dmg_type type;
+};
+
 struct dmg_modifier{
-    float amount;
+    float amount; //negative values are valid
+    dmg_type type;
 };
 
 struct _invincibility{};
@@ -121,13 +129,6 @@ struct has_action{
 
 struct heal{
     int amount;
-};
-
-enum class dmg_type {MAGICAL, PHYSICAL, PURE};
-
-struct damage{
-    int amount;
-    dmg_type type;
 };
 
 struct cost{

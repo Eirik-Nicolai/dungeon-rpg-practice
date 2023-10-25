@@ -104,6 +104,8 @@ void DungeonThing::on_load_init()
     m_reg.emplace<size>(edgeeast, 10, winsize.y);
 
     auto player = m_reg.create();
+    m_reg.emplace<_player>(player);
+
     // MOVE
     m_reg.emplace<movespeed>(player, 0.1f);
     m_reg.emplace<_renderable>(player);
@@ -191,37 +193,46 @@ void DungeonThing::on_load_init()
     m_reg.emplace<mana>(player, 100, 100);
     m_reg.emplace<armour>(player, 0, 0);
     m_reg.emplace<willpower>(player, 0, 0);
-    m_reg.emplace<force>(player, 2, 2);
-    m_reg.emplace<mind>(player, 2, 2);
-    m_reg.emplace<affected>(player);
+    m_reg.emplace<force>(player, 0, 0);
+    m_reg.emplace<mind>(player, 0, 0);
+    m_reg.emplace<affected>(player, std::vector<entt::entity>());
 
     auto reg_attack = m_reg.create();
-    m_reg.emplace<visual>(reg_attack, "ATK");
-    m_reg.emplace<damage>(reg_attack, 30);
+    m_reg.emplace<visual>(reg_attack, "ATK phys");
+    m_reg.emplace<damage>(reg_attack, 100, dmg_type::PHYSICAL);
 
-    auto weakness = m_reg.create();
-    m_reg.emplace<_debuff>(weakness);
-    m_reg.emplace<visual>(weakness, "WEAKENED");
-    m_reg.emplace<tick>(weakness, 2);
-    m_reg.emplace<dmg_modifier>(weakness, (float)0.0);
+    auto mag_attack = m_reg.create();
+    m_reg.emplace<visual>(mag_attack, "ATK mag");
+    m_reg.emplace<damage>(mag_attack, 100, dmg_type::MAGICAL);
 
-    auto bleed = m_reg.create();
-    m_reg.emplace<_debuff>(bleed);
-    m_reg.emplace<visual>(bleed, "BLEEDING");
-    m_reg.emplace<damage>(bleed, 10);
-    m_reg.emplace<tick>(bleed, 2);
 
-    auto bleed_attack = m_reg.create();
-    m_reg.emplace<visual>(bleed_attack, "Bleed atk");
-    m_reg.emplace<adds_debuff>(bleed_attack, bleed);
+    auto pure_attack = m_reg.create();
+    m_reg.emplace<visual>(pure_attack, "ATK pure");
+    m_reg.emplace<damage>(pure_attack, 100, dmg_type::MAGICAL);
 
-    auto weakness_attack = m_reg.create();
-    m_reg.emplace<visual>(weakness_attack, "Weakness atk");
-    m_reg.emplace<adds_debuff>(weakness_attack, weakness);
+    // auto weakness = m_reg.create();
+    // m_reg.emplace<_debuff>(weakness);
+    // m_reg.emplace<visual>(weakness, "WEAKENED");
+    // m_reg.emplace<tick>(weakness, 2);
+    // m_reg.emplace<dmg_modifier>(weakness, (float)0.0);
+
+    // auto bleed = m_reg.create();
+    // m_reg.emplace<_debuff>(bleed);
+    // m_reg.emplace<visual>(bleed, "BLEEDING");
+    // m_reg.emplace<damage>(bleed, 10);
+    // m_reg.emplace<tick>(bleed, 2);
+
+    // auto bleed_attack = m_reg.create();
+    // m_reg.emplace<visual>(bleed_attack, "Bleed atk");
+    // m_reg.emplace<adds_debuff>(bleed_attack, bleed);
+
+    // auto weakness_attack = m_reg.create();
+    // m_reg.emplace<visual>(weakness_attack, "Weakness atk");
+    // m_reg.emplace<adds_debuff>(weakness_attack, weakness);
 
     auto does_multiple_things_attack = m_reg.create();
-    m_reg.emplace<visual>(does_multiple_things_attack, "ATK MANY");
-    m_reg.emplace<action_children>(does_multiple_things_attack, std::vector<entt::entity>{reg_attack, weakness_attack});
+    m_reg.emplace<visual>(does_multiple_things_attack, "ATK");
+    m_reg.emplace<action_children>(does_multiple_things_attack, std::vector<entt::entity>{reg_attack});
 
     auto healing = m_reg.create();
     m_reg.emplace<visual>(healing, "HEAL");

@@ -123,6 +123,7 @@ void DungeonThing::STATE_PAUSE(float dt)
                     get_name(e),
                     [=](){
                         set_equipment(e);
+
                         NEXT_STATE.type = type::INIT_PAUSED;
                     }});
             }

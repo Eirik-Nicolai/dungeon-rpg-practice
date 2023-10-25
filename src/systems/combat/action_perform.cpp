@@ -9,10 +9,26 @@ void on_perform_action(entt::registry &reg, entt::entity &actor, entt::entity &t
     if(reg.all_of<damage>(action))
     {
         auto dmg = reg.get<damage>(action);
-        auto actual_dmg = get_actual_damage(dmg.amount, reg, actor, target);
+        int actual_dmg;
+        switch(dmg.type)
+        {
+            case dmg_type::PHYSICAL:
+                actual_dmg = calculate_damage_phys(reg, actor, dmg);
+                calculate_resist_phys(reg, target, actual_dmg);
+                break;
+            case dmg_type::MAGICAL:
+                actual_dmg = calculate_damage_magi(reg, actor, dmg);
+                calculate_resist_magi(reg, target, actual_dmg);
+                break;
+            case dmg_type::PURE:
+                actual_dmg = dmg.amount;
+                break;
+        }
+
         reg.patch<health>(target, [&](auto &h){
             h.curr -= actual_dmg;
         });
+        on_check_target_death(reg, actor, target);
     }
 
     if(reg.all_of<heal>(action))
@@ -41,33 +57,76 @@ void on_perform_action(entt::registry &reg, entt::entity &actor, entt::entity &t
         on_skill(reg, actor, target, action);
     }
 }
-
-int get_actual_damage(int &amount, entt::registry &reg, entt::entity &actor, entt::entity &target)
+//TODO clean up
+int calculate_damage_phys(entt::registry &reg, entt::entity &actor, damage& dmg)
 {
     // get damage with actor multiplier
     auto [max, curr] = reg.get<force>(actor);
-    int given_damage = amount + (amount*(curr/10));
+    int given_damage = dmg.amount + (dmg.amount*get_percentage(curr,10)); // effectively every 1 point of stat
+                                                    // increases dmg by 10%
+    given_damage *= get_raw_dmg_multiplier(reg, actor, dmg.type);
 
-    given_damage *= get_raw_dmg_multiplier(reg, actor);
-
-    // reduce damage by target armour
-    auto arm = reg.get<armour>(target).curr;
-    int taken_damage = std::clamp(0, given_damage, given_damage - arm); // FIXME need better formula
-    return taken_damage;
+    return given_damage;
 }
 
-float get_raw_dmg_multiplier(entt::registry &reg, entt::entity &actor)
+int calculate_damage_magi(entt::registry &reg, entt::entity &actor, damage& dmg)
 {
+    // get damage with actor multiplier
+    auto [max, curr] = reg.get<mind>(actor);
+    int given_damage = dmg.amount + (dmg.amount*get_percentage(curr, 100)); // effectively every 1 point of stat
+                                                     // increases dmg by 1%
+    given_damage *= get_raw_dmg_multiplier(reg, actor, dmg.type);
+
+    return given_damage;
+}
+
+void calculate_resist_phys(entt::registry &reg, entt::entity &target, int& dmg)
+{
+    dmg *= get_raw_dmg_multiplier(reg, target, dmg_type::PHYSICAL);
+        if(reg.all_of<force>(target))
+        dmg-=std::max(0,reg.get<force>(target).curr);
+    if(reg.all_of<armour>(target))
+        dmg-=std::max(0,reg.get<armour>(target).curr);
+}
+
+void calculate_resist_magi(entt::registry &reg, entt::entity &target, int& dmg)
+{
+    dmg *= get_raw_dmg_multiplier(reg, target, dmg_type::MAGICAL);
+    if(reg.all_of<mind>(target))
+        dmg-=std::max(0,(reg.get<mind>(target).curr/2)); // no negative damage values
+    if(reg.all_of<willpower>(target))
+        dmg-=std::max(0,reg.get<willpower>(target).curr);
+}
+
+float get_raw_dmg_multiplier(entt::registry &reg, entt::entity &actor, dmg_type type)
+{
+    float multiplier = 1.0;
     auto eff = reg.get<affected>(actor).effects;
     for(auto e : eff)
     {
         if(reg.all_of<dmg_modifier>(e))
         {
-            return reg.get<dmg_modifier>(e).amount;
+            switch (reg.get<dmg_modifier>(e).type)
+            {
+                case dmg_type::PHYSICAL:
+                    if(type==dmg_type::PHYSICAL)
+                        multiplier *= reg.get<dmg_modifier>(e).amount;
+                    break;
+                case dmg_type::MAGICAL:
+                    if(type==dmg_type::MAGICAL)
+                        multiplier *= reg.get<dmg_modifier>(e).amount;
+                    break;
+                default:
+                    multiplier *= reg.get<dmg_modifier>(e).amount;
+            }
+        }
+        if(reg.all_of<_invincibility>(e)) //TODO if i have invinsible i deal 0 damage
+        {
+            return 0.0;
         }
     }
+    return multiplier;
 }
-
 
 void apply_debuff(entt::registry &reg, entt::entity &debuff, entt::entity &target)
 {
@@ -117,6 +176,11 @@ void on_skill_cleanse(entt::registry &reg, entt::entity &actor, entt::entity &ta
 }
 
 void on_skill_summon(entt::registry &reg, entt::entity &actor, entt::entity &target, entt::entity &action)
+{
+
+}
+
+void on_check_target_death(entt::registry &reg, entt::entity &actor, entt::entity &target)
 {
 
 }

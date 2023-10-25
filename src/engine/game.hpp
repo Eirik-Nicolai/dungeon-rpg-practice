@@ -6,6 +6,7 @@
 #include "olcPixelGameEngine.h"
 
 #include "menu.hpp"
+#include "utils/utils.hpp"
 
 #include "types_and_defines.hpp"
 #include "components/combat.hpp"
@@ -96,11 +97,19 @@ class DungeonThing : public olc::PixelGameEngine
     public:
         std::vector<std::string> m_debug;
         std::string get_name(const entt::entity&, std::string = "UNNAMED_ENTITY");
-        int get_percentage(int part, int whole);
 
         std::vector<entt::entity> get_inventory_of_equip_type(entt::entity&);
         void set_equipment(const entt::entity &);
+        void update_stats_on_hover(entt::entity &);
+        void update_stats_on_select(entt::entity &);
 
+        template <typename component>
+        void draw_resource_bar(component &c, int x, int y, int w, int h, olc::Pixel col)
+        {
+            DrawRect(x,y, w, h, col);
+            FillRect(x+5,y+5,
+                     (w-5)*get_percentage(c.curr, c.max)-5, h-10, olc::WHITE);
+        }
         //TODO a bit grim doing it like this
         bool m_equip_finger_left;
         bool m_equip_head_left;

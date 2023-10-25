@@ -59,7 +59,7 @@ void DungeonThing::on_render_paused_stats()
     auto winx_menu = winx - winx_main;
 
     int equipment_win_y = winy*PAUSED::OVERVIEW::EQUIPMENT_SIZE_Y;
-    int stat_win_y = winy*(1-PAUSED::OVERVIEW::EQUIPMENT_SIZE_Y);
+    int stat_win_y = (winy-equipment_win_y);
 
     //FIXME move to init menu
     int mid_menu_x = winx_main + winx_menu/2;
@@ -68,19 +68,78 @@ void DungeonThing::on_render_paused_stats()
     //FIXME all this initializing and finding w/e can be done once on state change
     //now we're doing it every frame
 
-    auto [frce, mnd, armr, wllpwr] = m_reg.get<force, mind, armour, willpower>(m_player);
     auto [currhealth, currmana] = m_reg.get<health, mana>(m_player);
 
     // STATS
 
-    DrawRect(winx_main*0.79,winy*0.79, 300+20, 40, olc::WHITE);
-    FillRect(winx_main*0.80,winy*0.80,
-             get_percentage(currhealth.curr, currhealth.max)*3, 30, olc::WHITE);
+    DrawRect(winx_main*0.6,equipment_win_y+stat_win_y*0.20, 305, 40, olc::RED);
+    FillRect(5+winx_main*0.6,5+equipment_win_y+stat_win_y*0.20,
+             300*get_percentage(currhealth.curr, currhealth.max)-5, 30, olc::WHITE);
 
-    DrawString(winx_main*0.80, winy*0.85,
-               std::to_string(currmana.curr) + "/" + std::to_string(currmana.max),
+    DrawRect(winx_main*0.6,equipment_win_y+stat_win_y*0.55, 305, 40, olc::CYAN);
+    FillRect(5+winx_main*0.6,5+equipment_win_y+stat_win_y*0.55,
+             300*get_percentage(currhealth.curr, currhealth.max)-5, 30, olc::WHITE);
+
+    std::string spaces = currhealth.max%100==0 ? " " : "  ";
+    DrawString(winx_main*0.58, equipment_win_y+stat_win_y*0.10,
+               "HEALTH:" + spaces + std::to_string(currhealth.curr) + "/" + std::to_string(currhealth.max),
                olc::WHITE,
                3);
+
+    spaces = currmana.max%100==0 ? "   " : "    ";
+    DrawString(winx_main*0.58, equipment_win_y+stat_win_y*0.45,
+               "MANA:" + spaces + std::to_string(currmana.curr) + "/" + std::to_string(currmana.max),
+               olc::WHITE,
+               3);
+
+    const float xoffs = 0.05;
+    DrawString((xoffs*winx_main)+(GetStringLength("WILLPOWER", 3)-(GetStringLength("force", 3))),
+               equipment_win_y+stat_win_y*0.10,
+               "FORCE:",
+               olc::WHITE,
+               3);
+
+    DrawString((xoffs*winx_main)+(GetStringLength("WILLPOWER", 3)-(GetStringLength("mind", 3))),
+               equipment_win_y+stat_win_y*0.30,
+               "MIND:",
+               olc::WHITE,
+               3);
+
+    DrawString((xoffs*winx_main)+(GetStringLength("WILLPOWER", 3)-(GetStringLength("armour", 3))),
+               equipment_win_y+stat_win_y*0.50,
+               "ARMOUR:",
+               olc::WHITE,
+               3);
+
+    DrawString(winx_main*0.05,
+               equipment_win_y+stat_win_y*0.70,
+               "WILLPOWER:",
+               olc::WHITE,
+               3);
+
+    auto [frce, mnd, armr, wllpwr] = m_reg.get<force, mind, armour, willpower>(m_player);
+
+    DrawString(winx_main*0.30, equipment_win_y+stat_win_y*0.10,
+               std::to_string(frce.curr),
+               olc::WHITE,
+               3);
+
+    DrawString(winx_main*0.30, equipment_win_y+stat_win_y*0.30,
+               std::to_string(mnd.curr),
+               olc::WHITE,
+               3);
+
+    DrawString(winx_main*0.30, equipment_win_y+stat_win_y*0.50,
+               std::to_string(armr.curr),
+               olc::WHITE,
+               3);
+
+    DrawString(winx_main*0.30, equipment_win_y+stat_win_y*0.70,
+               std::to_string(wllpwr.curr),
+               olc::WHITE,
+               3);
+
+
 }
 
 void DungeonThing::on_render_paused_overview()
@@ -280,7 +339,7 @@ void PAUSED::OVERVIEW::draw_equipment(DungeonThing *olc, entt::entity &ent, int 
                     olc::WHITE,2);
     olc->DrawString(x+val_offs,y+init_offs+offs,
                     (frce.curr ? std::to_string(frce.curr) : "-"),
-                    olc::RED,2);
+                    frce.curr ? olc::RED : olc::WHITE,2);
 
     mind mnd;
     if(!olc->tryget_component(ent, mnd))
@@ -292,7 +351,7 @@ void PAUSED::OVERVIEW::draw_equipment(DungeonThing *olc, entt::entity &ent, int 
                     olc::WHITE,2);
     olc->DrawString(x+val_offs,y+init_offs+offs*2,
                     (mnd.curr ? std::to_string(mnd.curr) : "-"),
-                    olc::RED,2);
+                    mnd.curr ? olc::RED : olc::WHITE,2);
     armour arm;
     if(!olc->tryget_component(ent, arm))
     {
@@ -303,7 +362,7 @@ void PAUSED::OVERVIEW::draw_equipment(DungeonThing *olc, entt::entity &ent, int 
                     olc::WHITE,2);
     olc->DrawString(x+val_offs,y+init_offs+offs*3,
                     (arm.curr ? std::to_string(arm.curr) : "-"),
-                    olc::RED,2);
+                    arm.curr ? olc::RED : olc::WHITE,2);
 
     willpower wlpwr;
     if(!olc->tryget_component(ent, wlpwr))
@@ -315,7 +374,7 @@ void PAUSED::OVERVIEW::draw_equipment(DungeonThing *olc, entt::entity &ent, int 
                     olc::WHITE,2);
     olc->DrawString(x+val_offs,y+init_offs+offs*4,
                     (wlpwr.curr ? std::to_string(wlpwr.curr) : "-"),
-                    olc::RED,2);
+                    wlpwr.curr ? olc::RED : olc::WHITE,2);
 }
 
 

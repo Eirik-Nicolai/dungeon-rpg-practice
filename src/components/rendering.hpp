@@ -18,6 +18,7 @@ struct boss_appearence{
 
 struct visual{
     std::string name;
+    std::string desc;
     std::string char_repr;
     short colour;
 };

@@ -85,7 +85,7 @@ bool DungeonThing::OnUserCreate()
 {
     on_load_init();
 
-    CURR_STATE = {GameState::state::PAUSED, GameStateType::type::INIT_PAUSED};
+    CURR_STATE = {GameState::state::COMBAT, GameStateType::type::INIT};
     NEXT_STATE = CURR_STATE;
 
     m_fElapsedTimeSinceTick = 0;
@@ -189,7 +189,15 @@ void DungeonThing::set_equipment(const entt::entity &e)
     }
 }
 
-int DungeonThing::get_percentage(int part, int whole)
+//TODO
+void DungeonThing::update_stats_on_hover(entt::entity &)
 {
-    return 100*((float)part/(float)whole);
+    auto [frce, mnd, armr, wllpwr] = m_reg.get<force, mind, armour, willpower>(m_player);
+
+}
+
+void DungeonThing::update_stats_on_select(entt::entity &)
+{
+    auto [frce, mnd, armr, wllpwr] = m_reg.get<force, mind, armour, willpower>(m_player);
+
 }
