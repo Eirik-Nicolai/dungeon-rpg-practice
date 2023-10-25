@@ -3,11 +3,13 @@
 
 #include <entt/entt.hpp>
 
+//TODO change these to just store the index
 struct _helmet{};
 struct _torso{};
 struct _legs{};
-struct _off_hand{};
+
 struct _main_hand{};
+struct _off_hand{};
 
 struct _accessory_head{};
 struct _accessory_hand{};

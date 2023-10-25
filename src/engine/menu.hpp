@@ -14,63 +14,109 @@
 #include "components/globals.hpp"
 #include "components/equipment.hpp"
 
-struct TextItem
+//FIXME Redo all this shit
+//probably have pure virtual classes and
+//more generic text items
+//etc etc
+
+struct TextItemOnSelect
 {
   std::string text;
   std::function<void(void)> action;
 };
 
+struct TextItemOnScroll
+{
+  std::string text;
+  std::function<int(void)> action;
+};
+template
+<typename T>
 class Menu {
   public:
-    Menu();
+    Menu()
+    {
+      curr_selected = 0;
+    }
     virtual ~Menu() = default;
 
   public:
-    void ScrollDown();
-    void ScrollUp();
-    int ListSize();
-    void Select();
+    void ScrollDown()
+    {
+      curr_selected += 1;
+      if(curr_selected>=list_items.size()) curr_selected = 0;
+    }
+    void ScrollUp()
+    {
+      curr_selected -= 1;
+      if(curr_selected<0) curr_selected = list_items.size()-1;
+    }
+    void Select()
+    {
+      list_items[curr_selected].action();
+    }
+    int ListSize(){return list_items.size();}
+
+
+    void AddItem(T t){list_items.emplace_back(t);}
 
   public:
     int curr_selected;
-    std::vector<TextItem> list_items;
+    std::vector<T> list_items;
 };
 
-class PauseMenu : public Menu {
+class PauseMenu : public Menu<TextItemOnSelect> {
   public:
     PauseMenu() = default;
-    PauseMenu(TextItem&, TextItem&, TextItem&, TextItem&);
-    PauseMenu(TextItem&, TextItem&, TextItem&);
-    PauseMenu(TextItem&, TextItem&);
-    PauseMenu(TextItem&);
+    PauseMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
+    PauseMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
+    PauseMenu(TextItemOnSelect&, TextItemOnSelect&);
+    PauseMenu(TextItemOnSelect&);
 
   public:
 
 };
 
-class EquipmentMenu : public Menu {
+class EquipmentMenu : public Menu<TextItemOnScroll> {
   public:
     EquipmentMenu() = default;
     EquipmentMenu(std::function<void(void)>);
 
   public:
-    void LoadEquipment(entt::registry&, EquipmentState&);
-    entt::entity ScrollLeft();
-    entt::entity ScrollRight();
+    int ScrollUp();
+    int ScrollDown();
+    int ScrollLeft();
+    int ScrollRight();
+
+    void Select();
+
+    void AddItemLeft(TextItemOnScroll);
+    void AddItemMiddle(TextItemOnScroll);
+    void AddItemRight(TextItemOnScroll);
+    int curr_menu;
+    int CurrentSelected();
 
   private:
-    int curr_menu;
-
     Menu m_menus[3];
+    std::function<void(void)> menu_func;
 };
 
-class CombatMenu : public Menu {
+class InventoryMenu : public Menu<TextItemOnSelect> {
+  public:
+    InventoryMenu() = default;
+
+    void LoadInventoryOfType(std::vector<entt::entity>&);
+    void LoadAllInventoryForEntity(entt::registry&, entt::entity&);
+
+};
+
+class CombatMenu : public Menu<TextItemOnSelect> {
   public:
     CombatMenu() = default;
-    CombatMenu(TextItem&, TextItem&, TextItem&, TextItem&);
-    CombatMenu(TextItem&, TextItem&, TextItem&);
-    CombatMenu(TextItem&, TextItem&);
-    CombatMenu(TextItem&);
+    CombatMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
+    CombatMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
+    CombatMenu(TextItemOnSelect&, TextItemOnSelect&);
+    CombatMenu(TextItemOnSelect&);
 
   public:
     void ScrollLeft();
@@ -78,7 +124,7 @@ class CombatMenu : public Menu {
 
 };
 
-class TargetMenu : public Menu {
+class TargetMenu : public Menu<TextItemOnSelect> {
   public:
     TargetMenu() = default;
     TargetMenu(std::function<void(void)>);

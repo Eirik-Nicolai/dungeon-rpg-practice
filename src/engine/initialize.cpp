@@ -156,8 +156,22 @@ void DungeonThing::on_load_init()
     state.main_hand = mainhand;
     state.off_hand = offhand;
     state.jewellery_ears = ear;
-    state.jewellery_finger = finger;
+    state.jewellery_finger_left = finger;
 
+    auto skull = m_reg.create();
+    m_reg.emplace<_helmet>(skull);
+    m_reg.emplace<visual>(skull, "SKULL");
+    m_reg.emplace<mind>(skull, 1, 1);
+
+    auto horns = m_reg.create();
+    m_reg.emplace<_helmet>(horns);
+    m_reg.emplace<visual>(horns, "HORNED HELMET");
+    m_reg.emplace<force>(horns, 1, 1);
+    m_reg.emplace<armour>(horns, 2, 2);
+
+    auto &invstate = m_reg.ctx().get<InventoryState>();
+    invstate.equipables[INV_INDEX_HEAD].emplace_back(skull);
+    invstate.equipables[INV_INDEX_HEAD].emplace_back(horns);
 
     // COMBAT
     m_reg.emplace<_ally>(player);
@@ -219,25 +233,25 @@ void DungeonThing::on_load_init()
 
     m_player = player;
 
-    TextItem attack{
+    TextItemOnSelect attack{
         "ATTACK",
         [=]{
             NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
             m_intended_action = does_multiple_things_attack;
         }
     };
-    TextItem skill{
+    TextItemOnSelect skill{
         "SKILL",
         [&]{
             m_curr_menu = 1;
         }
     };
-    TextItem item{
+    TextItemOnSelect item{
         "ITEM",
         []{
             std::cout << "EXIT NOT IMPL" << std::endl;
         }};
-    TextItem run {
+    TextItemOnSelect run {
         "RUN",
         [&]{
             NEXT_STATE = {state::WALKING, type::FROM_COMBAT_TRANSITION};
@@ -245,13 +259,13 @@ void DungeonThing::on_load_init()
         }};
     m_combatmenus.emplace_back(CombatMenu(attack, skill, item, run));
 
-    TextItem cleanse{
+    TextItemOnSelect cleanse{
     "CLEANSE",
     [=]{
         NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
         m_intended_action = does_multiple_things_heal;
     }};
-    TextItem back{
+    TextItemOnSelect back{
     "BACK",
     [=]{
         m_curr_menu = 0;

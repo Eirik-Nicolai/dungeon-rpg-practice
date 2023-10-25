@@ -33,6 +33,7 @@ namespace PAUSED
         constexpr int EQUIPMENT_MAX_STR_LEN = 10*16;
 
         void draw_equipment(DungeonThing*, entt::entity&, int x, int y);
+        std::string get_inv_stats_drawn(DungeonThing*, entt::entity&);
     }
 }
 

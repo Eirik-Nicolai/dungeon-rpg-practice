@@ -58,35 +58,94 @@ void DungeonThing::on_userinput_walking()
 
 void DungeonThing::on_userinput_paused()
 {
-    if (GetKey(olc::Key::W).bReleased)
+    switch(CURR_STATE.type)
     {
-        m_pausemenus[m_curr_menu].ScrollUp();
-    }
-    if (GetKey(olc::Key::S).bReleased)
-    {
-        m_pausemenus[m_curr_menu].ScrollDown();
-    }
-    if(GetKey(olc::Key::ENTER).bReleased)
-    {
-        m_pausemenus[m_curr_menu].Select();
+        case type::OVERVIEW:
+        {
+            if (GetKey(olc::Key::W).bReleased)
+            {
+                m_pausemenus[m_curr_menu].ScrollUp();
+            }
+            if (GetKey(olc::Key::S).bReleased)
+            {
+                m_pausemenus[m_curr_menu].ScrollDown();
+            }
+            if(GetKey(olc::Key::ENTER).bReleased)
+            {
+                m_pausemenus[m_curr_menu].Select();
+            }
+        }
+        break;
+        case type::EQUIPMENT:
+        {
+            if (GetKey(olc::Key::W).bReleased)
+            {
+                m_current_selected_equipment_type = m_equipment_menu.ScrollUp();
+            }
+            if (GetKey(olc::Key::S).bReleased)
+            {
+                m_current_selected_equipment_type = m_equipment_menu.ScrollDown();
+            }
+            if (GetKey(olc::Key::A).bReleased)
+            {
+                m_current_selected_equipment_type = m_equipment_menu.ScrollLeft();
+            }
+            if (GetKey(olc::Key::D).bReleased)
+            {
+                m_current_selected_equipment_type = m_equipment_menu.ScrollRight();
+            }
+            if(GetKey(olc::Key::ENTER).bReleased)
+            {
+                m_equipment_menu.Select();
+            }
+        }
+        break;
+        case ::type::INVENTORY:
+        case type::CHANGING_EQUIPMENT:
+        {
+            if (GetKey(olc::Key::W).bReleased)
+            {
+                m_inventory_menu.ScrollUp();
+            }
+            if (GetKey(olc::Key::S).bReleased)
+            {
+                m_inventory_menu.ScrollDown();
+            }
+            // TODO use to see special effects
+            // if (GetKey(olc::Key::A).bReleased)
+            // {
+            //     m_current_selected_equipment_type = m_equipment_menu.ScrollLeft();
+            // }
+            // if (GetKey(olc::Key::D).bReleased)
+            // {
+            //     m_current_selected_equipment_type = m_equipment_menu.ScrollRight();
+            // }
+            if(GetKey(olc::Key::ENTER).bReleased)
+            {
+                m_inventory_menu.Select();
+            }
+        }
+        break;
+        default:
+            std::cout << "PAUSE TYPE NOT RECOGNISED" << std::endl;
     }
 
 
     // DEBUG
 
-    if(GetKey(olc::Key::Z).bReleased)
-    {
-        m_reg.patch<health>(m_player, [](auto &h){
-            h.curr -= 15;
-        });
-    }
+    // if(GetKey(olc::Key::Z).bReleased)
+    // {
+    //     m_reg.patch<health>(m_player, [](auto &h){
+    //         h.curr -= 15;
+    //     });
+    // }
 
-    if(GetKey(olc::Key::X).bReleased)
-    {
-        m_reg.patch<health>(m_player, [](auto &h){
-           h.curr += 15;
-        });
-    }
+    // if(GetKey(olc::Key::X).bReleased)
+    // {
+    //     m_reg.patch<health>(m_player, [](auto &h){
+    //        h.curr += 15;
+    //     });
+    // }
 }
 
 

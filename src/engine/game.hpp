@@ -87,12 +87,20 @@ class DungeonThing : public olc::PixelGameEngine
 
         // EQUIPMENT AND INVENTORY
         std::vector<PauseMenu> m_pausemenus;
-        std::vector<EquipmentMenu> m_equipment;
+
+        EquipmentMenu m_equipment_menu;
+        InventoryMenu m_inventory_menu;
+        int m_current_selected_equipment_type;
+        std::vector<entt::entity> m_inventory_list;
 
     public:
         std::vector<std::string> m_debug;
-        std::string get_name(entt::entity&);
+        std::string get_name(const entt::entity&, std::string = "UNNAMED_ENTITY");
         int get_percentage(int part, int whole);
+
+        std::vector<entt::entity> get_inventory_of_equip_type(entt::entity&);
+        void set_equipment(const entt::entity &);
+        int get_equipment_indx(const entt::entity &);
 
         template <typename component>
         bool tryget_component(entt::entity &ent, component &comp)

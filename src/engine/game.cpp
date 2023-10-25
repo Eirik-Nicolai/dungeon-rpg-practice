@@ -10,30 +10,33 @@ DungeonThing::DungeonThing()
     m_transition_acc = 5;
     m_elapsed_transition_time = 1;
 
-    TextItem resume{
+    m_current_selected_equipment_type = 0;
+
+    TextItemOnSelect resume{
         "RESUME",
         [&]{
             NEXT_STATE.state = state::WALKING;
             NEXT_STATE.type = type::FREEROAM;
         }
     };
-    TextItem inventory{
+    TextItemOnSelect inventory{
         "INVENTORY",
         [&]{
             m_curr_menu = 1;
-            NEXT_STATE.type = type::INVENTORY;
+            //NEXT_STATE.type = type::INVENTORY;
         }
     };
-    TextItem equipment{
+    TextItemOnSelect equipment{
         "EQUIPMENT",
         [&]{
             // TODO menu list of equipment types
             // and then list of currently held items
-            m_curr_menu = 2;
+            //m_curr_menu = 2;
+
             NEXT_STATE.type = type::EQUIPMENT;
         }
     };
-    TextItem othershit{
+    TextItemOnSelect othershit{
         "SOME OTHER SHIT",
         []{
             std::cout << "SOME SHIT NOT IMPL" << std::endl;
@@ -41,19 +44,19 @@ DungeonThing::DungeonThing()
     };
     m_pausemenus.emplace_back(PauseMenu(resume, inventory, equipment, othershit));
 
-    TextItem USE{
+    TextItemOnSelect USE{
         "USE ITEM",
         [&]{
             std::cout << "USE ITEM NOT IMPL" << std::endl;
         }
     };
-    TextItem INSPECT{
+    TextItemOnSelect INSPECT{
         "INSPECT",
         [&]{
             std::cout << "INSPECT NOT IMPL" << std::endl;
         }
     };
-    TextItem BACK{
+    TextItemOnSelect BACK{
         "BACK",
         [&]{
             m_curr_menu = 0;
@@ -61,13 +64,13 @@ DungeonThing::DungeonThing()
         }};
 
     m_pausemenus.emplace_back(PauseMenu(USE, INSPECT, BACK));
-    TextItem EQUIP{
+    TextItemOnSelect EQUIP{
         "EQUIP ITEM",
         [&]{
             std::cout << "EQUIP ITEM NOT IMPL" << std::endl;
         }
     };
-    TextItem INFO{
+    TextItemOnSelect INFO{
         "INFO",
         [&]{
             std::cout << "INFO NOT IMPL" << std::endl;
@@ -137,15 +140,71 @@ bool DungeonThing::delay_for(float delay, float dt)
     return false;
 }
 
-std::string DungeonThing::get_name(entt::entity &ent)
+std::string DungeonThing::get_name(const entt::entity &ent, std::string ret)
 {
     if(auto vis = m_reg.try_get<visual>(ent);m_reg.try_get<visual>(ent) != nullptr)
     {
         return vis->name;
     }
-    return "UNNAMED_ENTITY";
+    return ret;
 }
 
+void DungeonThing::set_equipment(const entt::entity &e)
+{
+    auto &equipment = m_reg.ctx().get<EquipmentState>();
+    std::cout << get_name(e) << std::endl;
+    switch (get_equipment_indx(e))
+    {
+        case INV_INDEX_HEAD:
+            equipment.head = e;
+            break;
+        case INV_INDEX_TORSO:
+            equipment.torso = e;
+            break;
+        case INV_INDEX_LEGS:
+            equipment.legs = e;
+            break;
+        case INV_INDEX_MAINHAND:
+            equipment.main_hand = e;
+            break;
+        case INV_INDEX_OFFHAND:
+            equipment.off_hand = e;
+            break;
+        case INV_INDEX_NECKLACE:
+            equipment.jewellery_necklace = e;
+            break;
+        case INV_INDEX_FINGERLEFT:
+            equipment.jewellery_finger_left = e;
+            break;
+        case INV_INDEX_FINGERRIGHT:
+            equipment.jewellery_finger_right = e;
+            break;
+        case INV_INDEX_EARS:
+            equipment.jewellery_ears = e;
+            break;
+        default:
+            throw std::runtime_error("equipment indx not recognised");
+    }
+}
+
+int DungeonThing::get_equipment_indx(const entt::entity &e)
+{
+    if(m_reg.all_of<_helmet>(e))
+        return INV_INDEX_HEAD;
+    if(m_reg.all_of<_legs>(e))
+        return INV_INDEX_LEGS;
+    if(m_reg.all_of<_torso>(e))
+        return INV_INDEX_HEAD;
+    if(m_reg.all_of<_main_hand>(e))
+        return INV_INDEX_HEAD;
+    if(m_reg.all_of<_off_hand>(e))
+        return INV_INDEX_HEAD;
+    if(m_reg.all_of<_accessory_head>(e))
+        return INV_INDEX_HEAD;
+    if(m_reg.all_of<_accessory_hand>(e))
+        return INV_INDEX_HEAD;
+    return -1;
+}
 
 int DungeonThing::get_percentage(int part, int whole)
 {

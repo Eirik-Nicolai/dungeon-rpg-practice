@@ -55,6 +55,7 @@ struct GameStateType
     OVERVIEW,
     INVENTORY,
     EQUIPMENT,
+    CHANGING_EQUIPMENT,
     ITEM_SELECTED,
     // -----------------------------
 };
