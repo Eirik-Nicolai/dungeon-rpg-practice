@@ -40,8 +40,6 @@ void DungeonThing::STATE_COMBAT(float dt)
             //m_reg.emplace<force>(goblin_big, 10, 10);
             //m_reg.emplace<mind>(goblin_big, 0, 0);
             m_reg.emplace<has_action>(goblin_big, heavy_attack);
-            m_reg.emplace<affected>(goblin_big);
-
 
             // m_reg.emplace<armour>(m_player, 0, 0);
             // m_reg.emplace<willpower>(m_player, 0, 0);
@@ -62,7 +60,7 @@ void DungeonThing::STATE_COMBAT(float dt)
             m_reg.emplace<dmg_modifier>(buff3, 1.1, dmg_type::PHYSICAL);
 
             auto buff4 = m_reg.create();
-            m_reg.emplace<_buff>(buff4);
+            m_reg.emplace<_debuff>(buff4);
             m_reg.emplace<visual>(buff4, "dmg inc", "A", "GG");
             m_reg.emplace<dmg_modifier>(buff4, 1.1, dmg_type::PHYSICAL);
 
@@ -72,18 +70,24 @@ void DungeonThing::STATE_COMBAT(float dt)
                 aff.effects.emplace_back(buff3);
                 aff.effects.emplace_back(buff4);
             });
+            m_reg.emplace<affected>(goblin_big, std::vector<entt::entity>{
+                buff1,
+                poison,
+                buff2,
+                buff3,
+                buff4
+            });
+
             //m_reg.emplace_or_replace<force>(m_player, 0, 0);
             //m_reg.emplace_or_replace<mind>(m_player, 0, 0);
-            // auto goblin_mage = m_reg.create();
-            // m_reg.emplace<combat_appearence>(goblin_mage, "U");
-            // m_reg.emplace<health>(goblin_mage, 40, 40);
-            // m_reg.emplace<armour>(goblin_mage, 1);
-            // m_reg.emplace<force>(goblin_mage, 0, 0);
-            // m_reg.emplace<mind>(goblin_mage, 20, 20);
-            // m_reg.emplace<has_action>(goblin_mage, poison_attack);
-            // m_reg.emplace<_enemy>(goblin_mage);
-            // m_reg.emplace<affected>(goblin_mage);
-
+            auto goblin_mage = m_reg.create();
+            m_reg.emplace<combat_appearence>(goblin_mage, "U");
+            m_reg.emplace<health>(goblin_mage, 40, 40);
+            m_reg.emplace<armour>(goblin_mage, 1);
+            m_reg.emplace<force>(goblin_mage, 0, 0);
+            m_reg.emplace<mind>(goblin_mage, 20, 20);
+            m_reg.emplace<_enemy>(goblin_mage);
+            m_reg.emplace<affected>(goblin_mage);
 
             // find positions for multi-group enemies/allies
             auto enemy_group = m_reg.view<_enemy>();
@@ -92,7 +96,6 @@ void DungeonThing::STATE_COMBAT(float dt)
             auto posx_enemy = winx * 0.70;
 
             m_reg.emplace_or_replace<combat::pos>(m_player, (int)posx_allies, winy/3);
-            m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy/3);
 
             // FIXME use the view to calc based on amount of enemies
             switch (enemy_group.size())
@@ -101,8 +104,8 @@ void DungeonThing::STATE_COMBAT(float dt)
                     //auto en = *enemy_group.end();
 
                 case 2:
-                    //m_reg.emplace_or_replace<combat::pos>(goblin_mage, (int)posx_enemy, winy/4);
-                    //m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy*2/4);
+                    m_reg.emplace_or_replace<combat::pos>(goblin_mage, (int)posx_enemy, winy/4);
+                    m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy*2/4);
                     break;
                 case 1:
                     //m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy/3);

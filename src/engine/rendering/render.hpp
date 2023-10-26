@@ -46,4 +46,7 @@ inline int GetStringLength(std::string s, int scale)
     return s.size() * 8 * scale;
 }
 
+
+
+
 #endif // RENDER_H_

@@ -1,6 +1,12 @@
 #include "render.hpp"
 
 
+void DungeonThing::draw_effect_icon(const std::string &c, int x, int y, olc::Pixel inner, olc::Pixel outer)
+{
+    DrawRect(x, y, GetStringLength(c, 2)+7, GetStringLength("X", 2)+7, outer);
+    DrawString(x+5,y+5,c,inner,2);
+}
+
 void DungeonThing::on_render_transition_combat(float dt)
 {
     auto [winx, winy] = GetScreenSize();

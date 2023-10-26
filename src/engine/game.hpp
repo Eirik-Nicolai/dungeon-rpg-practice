@@ -110,6 +110,9 @@ class DungeonThing : public olc::PixelGameEngine
             FillRect(x+5,y+5,
                      (w-5)*get_percentage(c.curr, c.max)-5, h-10, olc::WHITE);
         }
+
+        void draw_effect_icon(const std::string&, int x, int y, olc::Pixel inner, olc::Pixel outer);
+
         //TODO a bit grim doing it like this
         bool m_equip_finger_left;
         bool m_equip_head_left;
