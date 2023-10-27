@@ -82,9 +82,9 @@ class DungeonThing : public olc::PixelGameEngine
         std::queue<combat_action> m_movequeue_allies;
         std::queue<combat_action> m_movequeue_enemy;
         entt::entity m_intended_action;
-        std::vector<MultiDimMenu> m_combat_menus;
+        std::vector<CombatMenu> m_combat_menus;
         int m_curr_menu;
-        MultiDimMenu m_target_menu;
+        TargetMenu m_target_menu;
 
         // EQUIPMENT AND INVENTORY
         SimpleMenu m_pause_menu;
@@ -98,6 +98,7 @@ class DungeonThing : public olc::PixelGameEngine
         std::vector<std::string> m_debug;
         std::string get_name(const entt::entity&, std::string = "UNNAMED_ENTITY");
 
+        bool has_enough_resources(entt::entity&, entt::entity&);
         std::vector<entt::entity> get_inventory_of_equip_type(entt::entity&);
         void set_equipment(const entt::entity &);
         void update_stats_on_hover(entt::entity &);

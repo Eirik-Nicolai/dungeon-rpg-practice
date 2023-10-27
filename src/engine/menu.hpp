@@ -106,10 +106,12 @@ class SimpleMenu : Menu
 
 
 // menu with dimensions in x and y axis
+template
+<typename Type, typename ret>
 class MultiDimMenu : Menu
 {
-  using multidimlist = std::vector<std::vector<MenuItem<entt::entity, void>>>;
-  using list         = std::vector<MenuItem<entt::entity, void>>;
+  using multidimlist = std::vector<std::vector<MenuItem<Type, ret>>>;
+  using list         = std::vector<MenuItem<Type, ret>>;
   public:
     MultiDimMenu() = default;
     MultiDimMenu(list &);
@@ -120,129 +122,44 @@ class MultiDimMenu : Menu
   public:
     void scroll_up() override;
     void scroll_down() override;
-    void scroll_left();
-    void scroll_right();
+    virtual void scroll_left();
+    virtual void scroll_right();
 
     void select() override;
     int size() override;
     bool is_hovered(int) override;
-    bool is_hovered(int,int);
+    virtual bool is_hovered(int,int);
 
-    MenuItem<entt::entity, void> get_hovered();
+    virtual MenuItem<Type, ret> get_hovered();
 
-    list &operator [](int i);
-
+    virtual list &operator [](int i);
 
   private:
     multidimlist items;
 };
 
-// template
-// <typename T>
-// class Menu {
-//   public:
-//     Menu()
-//     {
-//       curr_selected = 0;
-//     }
-//     virtual ~Menu() = default;
+class CombatMenu : public MultiDimMenu<bool, void>
+{
+  using item = MenuItem<bool, void>;
+  using list = std::vector<item>;
+  public:
+    CombatMenu() = default;
+    CombatMenu(list &);
+    CombatMenu(list &, list &);
+    CombatMenu(list &, list &, list &);
+    CombatMenu(list &, list &, list &, list &);
+};
 
-//   public:
-//     void ScrollDown()
-//     {
-//       curr_selected += 1;
-//       if(curr_selected>=list_items.size()) curr_selected = 0;
-//     }
-//     void ScrollUp()
-//     {
-//       curr_selected -= 1;
-//       if(curr_selected<0) curr_selected = list_items.size()-1;
-//     }
-//     void Select()
-//     {
-//       list_items[curr_selected].action();
-//     }
-//     int ListSize(){return list_items.size();}
-
-
-//     void AddItem(T t){list_items.emplace_back(t);}
-
-//   public:
-//     int curr_selected;
-//     std::vector<T> list_items;
-// };
-
-// class PauseMenu : public Menu<TextItemOnSelect> {
-//   public:
-//     PauseMenu() = default;
-//     PauseMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
-//     PauseMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
-//     PauseMenu(TextItemOnSelect&, TextItemOnSelect&);
-//     PauseMenu(TextItemOnSelect&);
-
-//   public:
-
-// };
-
-// class EquipmentMenu : public Menu<TextItemOnScroll> {
-//   public:
-//     EquipmentMenu() = default;
-//     EquipmentMenu(std::function<void(void)>);
-
-//   public:
-//     int ScrollUp();
-//     int ScrollDown();
-//     int ScrollLeft();
-//     int ScrollRight();
-
-//     void Select();
-
-//     void AddItemLeft(TextItemOnScroll);
-//     void AddItemMiddle(TextItemOnScroll);
-//     void AddItemRight(TextItemOnScroll);
-//     int curr_menu;
-//     int CurrentSelected();
-
-//   private:
-//     Menu m_menus[3];
-//     std::function<void(void)> menu_func;
-// };
-
-// class InventoryMenu : public Menu<TextItemOnSelect> {
-//   public:
-//     InventoryMenu() = default;
-
-//     void LoadInventoryOfType(std::vector<entt::entity>&);
-//     void LoadAllInventoryForEntity(entt::registry&, entt::entity&);
-
-// };
-
-// class CombatMenu : public Menu<TextItemOnSelect> {
-//   public:
-//     CombatMenu() = default;
-//     CombatMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
-//     CombatMenu(TextItemOnSelect&, TextItemOnSelect&, TextItemOnSelect&);
-//     CombatMenu(TextItemOnSelect&, TextItemOnSelect&);
-//     CombatMenu(TextItemOnSelect&);
-
-//   public:
-//     void ScrollLeft();
-//     void ScrollRight();
-
-// };
-
-// class TargetMenu : public Menu<TextItemOnSelect> {
-//   public:
-//     TargetMenu() = default;
-//     TargetMenu(std::function<void(void)>);
-
-//     void AddTargets(std::vector<entt::entity> &);
-
-//   public:
-//     entt::entity GetSelected();
-//   private:
-//     std::vector<entt::entity> targets;
-// };
-
+class TargetMenu : public MultiDimMenu<entt::entity, void>
+{
+  using item = MenuItem<entt::entity, void>;
+  using list = std::vector<item>;
+  public:
+    TargetMenu() = default;
+    TargetMenu(list &);
+    TargetMenu(list &, list &);
+    TargetMenu(list &, list &, list &);
+    TargetMenu(list &, list &, list &, list &);
+};
 
 #endif // MENU_H_

@@ -129,88 +129,42 @@ void DungeonThing::STATE_COMBAT(float dt)
             //m_targetmenu.clear();
 
 
-            MenuItem<entt::entity,void> attack{
+            MenuItem<bool,void> attack{
             .info =    "ATTACK",
             .select_cmd = [&]{
                 //NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
                 m_curr_menu = 1;
             }};
 
-            MenuItem<entt::entity, void> skill{
+            MenuItem<bool, void> skill{
             .info =    "SKILL",
             .select_cmd = [&]{
                 m_curr_menu = 2;
             }};
 
-            MenuItem<entt::entity,void> item{
+            MenuItem<bool,void> item{
             .info =    "ITEM",
             .select_cmd = [&]{
                 std::cout << "ITEMS NOT IMPL" << std::endl;
             }};
-            MenuItem<entt::entity,void> item1{
+            MenuItem<bool,void> item1{
             .info =    "ITEM",
             .select_cmd = [&]{
                 std::cout << "ITEMS NOT IMPL" << std::endl;
             }};
-            auto col1 = std::vector<MenuItem<entt::entity,void>>{attack,skill};
-            auto col2 = std::vector<MenuItem<entt::entity,void>>{item};
-            m_combat_menus.emplace_back(MultiDimMenu(col1, col2));
-
-            // TODO need to figure out AOE and targeting diff tthings in one action
-            auto hit_hard = m_reg.create();
-            m_reg.emplace<visual>(hit_hard, "superpunch");
-            m_reg.emplace<damage>(hit_hard, 100, dmg_type::PHYSICAL);
-
-            auto superpunch = m_reg.create();
-            m_reg.emplace<cost>(superpunch, 30, cost_type::MANA);
-            m_reg.emplace<visual>(superpunch, "superpunch");
-            m_reg.emplace<action_children>(superpunch, std::vector<entt::entity>{
-                    hit_hard
-                });
-
-            MenuItem<entt::entity,void> at1{
-            .info =    "HEAVY ATTACK",
-            .select_cmd = [=]{
-                m_intended_action = superpunch;
-                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-            }};
-
-            MenuItem<entt::entity, void> at2{
-            .info =    "BITCH",
-            .select_cmd = [=]{
-                m_intended_action = heavy_attack;
-                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-            }};
-
-            MenuItem<entt::entity, void> at3{
-            .info =    "CUNT",
-            .select_cmd = [=]{
-                m_intended_action = heavy_attack;
-                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-            }};
-
-            MenuItem<entt::entity,void> back{
-            .info =    "BACK",
-            .select_cmd = [&]{
-                m_curr_menu = 0;
-            }};
-            auto atkcol1 = std::vector<MenuItem<entt::entity,void>>{at1, at2};
-            auto atkcol2 = std::vector<MenuItem<entt::entity,void>>{at3, back};
-            m_combat_menus.emplace_back(MultiDimMenu(atkcol1, atkcol2));
+            auto col1 = std::vector<MenuItem<bool,void>>{attack,skill};
+            auto col2 = std::vector<MenuItem<bool,void>>{item};
+            m_combat_menus.emplace_back(CombatMenu(col1, col2));
+            auto atkcol1 = std::vector<MenuItem<bool,void>>{};
+            m_combat_menus.emplace_back(CombatMenu(atkcol1));
 
 
-            MenuItem<entt::entity,void> sk1{
+            MenuItem<bool,void> sk1{
             .info =    "SKILL",
             .select_cmd = [=]{
                 m_intended_action = heavy_attack;
                 NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
             }};
-
-            auto skcol1 = std::vector<MenuItem<entt::entity,void>>{at1};
-            auto skcol2 = std::vector<MenuItem<entt::entity,void>>{back};
-            m_combat_menus.emplace_back(MultiDimMenu(skcol1));
-            m_combat_menus.emplace_back(MultiDimMenu(skcol2));
-
 
             //FIXME clean up
             std::vector<MenuItem<entt::entity, void>> enemyvec;
@@ -252,7 +206,7 @@ void DungeonThing::STATE_COMBAT(float dt)
             //         });
             // }
             m_reg.ctx().emplace<CombatState>(-1);
-            m_target_menu = MultiDimMenu(enemyvec);
+            m_target_menu = TargetMenu(enemyvec);
 
             m_transition_progress = 0.0;
             m_elapsed_transition_time = 1.0;
@@ -280,6 +234,59 @@ void DungeonThing::STATE_COMBAT(float dt)
             Debugger::instance()+="STATE: PLAYER_SELECTING_ACTION";
             on_userinput_combat();
             on_render_combat();
+        }
+        break;
+        case type::INIT_PLAYER_SELECTING_TARGET:
+        {
+            // TODO need to figure out AOE and targeting diff tthings in one action
+            auto hit_hard = m_reg.create();
+            m_reg.emplace<visual>(hit_hard, "superpunch");
+            m_reg.emplace<damage>(hit_hard, 100, dmg_type::PHYSICAL);
+
+            auto superpunch = m_reg.create();
+            m_reg.emplace<cost>(superpunch, 30, resource_type::MANA);
+            m_reg.emplace<visual>(superpunch, "superpunch");
+            m_reg.emplace<action_children>(superpunch, std::vector<entt::entity>{
+                    hit_hard
+                });
+
+            MenuItem<bool,void> at1{
+            .content = has_enough_resources(m_player, superpunch),
+            .info =    "HEAVY ATTACK",
+            .select_cmd = [=]{
+                m_intended_action = superpunch;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            MenuItem<bool, void> at2{
+            .content = true,
+            .info =    "BITCH",
+            .select_cmd = [=]{
+                m_intended_action = superpunch;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            MenuItem<bool, void> at3{
+            .content = true,
+            .info =    "CUNT",
+            .select_cmd = [=]{
+                m_intended_action = superpunch;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            MenuItem<bool,void> back{
+            .content = true,
+            .info =    "BACK",
+            .select_cmd = [&]{
+                m_curr_menu = 0;
+            }};
+            auto atkcol1 = std::vector<MenuItem<bool,void>>{at1, at2};
+            auto atkcol2 = std::vector<MenuItem<bool,void>>{at3, back};
+
+            m_combat_menus[1] = CombatMenu(atkcol1);
+
+            NEXT_STATE.type = type::PLAYER_SELECTING_TARGET;
+
         }
         break;
         case type::PLAYER_SELECTING_TARGET:
@@ -314,13 +321,6 @@ void DungeonThing::STATE_COMBAT(float dt)
             }
             NEXT_STATE.type = type::PERFORMING_COMBAT_ACTIONS_PLAYER;
             on_render_combat();
-        }
-        break;
-        case type::INIT_PLAYER_SELECTING_TARGET:
-        {
-            Debugger::instance()+="STATE: INIT_PLAYER_SELECTING_TARGET";
-            on_render_combat();
-            NEXT_STATE.type = type::PLAYER_SELECTING_TARGET;
         }
         break;
         case type::PERFORMING_COMBAT_ACTIONS_PLAYER:

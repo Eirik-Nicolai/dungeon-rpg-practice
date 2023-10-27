@@ -131,10 +131,10 @@ struct heal{
     int amount;
 };
 
-enum cost_type{MANA,HEALTH};
+enum resource_type{MANA,HEALTH};
 struct cost{
     int amount;
-    cost_type type;
+    resource_type type;
 };
 
 struct adds_debuff{

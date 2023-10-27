@@ -190,15 +190,54 @@ void DungeonThing::set_equipment(const entt::entity &e)
     }
 }
 
-//TODO
+//FIXME implement
 void DungeonThing::update_stats_on_hover(entt::entity &)
 {
     auto [frce, mnd, armr, wllpwr] = m_reg.get<force, mind, armour, willpower>(m_player);
 
 }
 
+//FIXME implement
 void DungeonThing::update_stats_on_select(entt::entity &)
 {
     auto [frce, mnd, armr, wllpwr] = m_reg.get<force, mind, armour, willpower>(m_player);
 
+}
+
+//TODO move to combat
+bool DungeonThing::has_enough_resources(entt::entity &actor, entt::entity &action)
+{
+    cost c;
+    if(tryget_component(action, c))
+    {
+        switch(c.type)
+        {
+            case resource_type::MANA:
+            {
+                mana m;
+                if(tryget_component(actor, m))
+                {
+                    return m.curr >= c.amount;
+                }
+                std::cout << "ACTOR DOESN¨T HAVE MANA FOR ACTION" << std::endl;
+                return false;
+            }
+            break;
+            case resource_type::HEALTH:
+            {
+                health h;
+                if(tryget_component(actor, h))
+                {
+                    return h.curr >= c.amount;
+                }
+                //this shouldn't happen
+                return false;
+            }
+            break;
+            default:
+                std::cout << "RESOURCE TYPE NOT IMPL" << std::endl;
+        }
+    }
+    // no cost
+    return true;
 }

@@ -166,27 +166,39 @@ void ScrollableMenu::scroll_down()
   }
 }
 
-using singlelist = std::vector<MenuItem<entt::entity, void>>;
+template
+<typename Type, typename ret>
+using list = std::vector<MenuItem<Type, ret>>;
+using targetlist = list<entt::entity, void>;
+using combatlist = list<bool, void>;
 
-MultiDimMenu::MultiDimMenu(singlelist &l1) : Menu()
+template
+<typename Type, typename ret>
+MultiDimMenu<Type, ret>::MultiDimMenu(list &l1) : Menu()
 {
   items.emplace_back(l1);
 }
 
-MultiDimMenu::MultiDimMenu(singlelist &l1, singlelist &l2) : Menu()
+template
+<typename Type, typename ret>
+MultiDimMenu<Type, ret>::MultiDimMenu(list &l1, list &l2) : Menu()
 {
   items.emplace_back(l1);
   items.emplace_back(l2);
 }
 
-MultiDimMenu::MultiDimMenu(singlelist &l1, singlelist &l2, singlelist &l3) : Menu()
+template
+<typename Type, typename ret>
+MultiDimMenu<Type, ret>::MultiDimMenu(list &l1, list &l2, list &l3) : Menu()
 {
   items.emplace_back(l1);
   items.emplace_back(l2);
   items.emplace_back(l3);
 }
 
-MultiDimMenu::MultiDimMenu(singlelist &l1, singlelist &l2, singlelist &l3, singlelist &l4) : Menu()
+template
+<typename Type, typename ret>
+MultiDimMenu<Type, ret>::MultiDimMenu(list &l1, list &l2, list &l3, list &l4) : Menu()
 {
   items.emplace_back(l1);
   items.emplace_back(l2);
@@ -194,29 +206,39 @@ MultiDimMenu::MultiDimMenu(singlelist &l1, singlelist &l2, singlelist &l3, singl
   items.emplace_back(l4);
 }
 
-void MultiDimMenu::select()
+template
+<typename Type, typename ret>
+void MultiDimMenu<Type, ret>::select()
 {
   items[sel_col][sel_row].select_cmd();
 }
 
-int MultiDimMenu::size()
+template
+<typename Type, typename ret>
+int MultiDimMenu<Type, ret>::size()
 {
   return items.size();
 }
 
+template
+<typename Type, typename ret>
 // TODO figure this out
-bool MultiDimMenu::is_hovered(int r)
+bool MultiDimMenu<Type, ret>::is_hovered(int r)
 {
   std::cout << "NOT IMPL" << std::endl;
   return sel_row==r;
 }
 
-bool MultiDimMenu::is_hovered(int r, int c)
+template
+<typename Type, typename ret>
+bool MultiDimMenu<Type, ret>::is_hovered(int r, int c)
 {
   return sel_row==r && sel_col == c;
 }
 
-MenuItem<entt::entity, void> MultiDimMenu::get_hovered()
+template
+<typename Type, typename ret>
+MenuItem<Type, ret> MultiDimMenu<Type, ret>::get_hovered()
 {
   if(sel_col < items.size())
   {
@@ -226,39 +248,49 @@ MenuItem<entt::entity, void> MultiDimMenu::get_hovered()
     }
     else
     {
-      std::cout << "MultiDimMenu::get_hovered() row out of bounds" << std::endl;
+      std::cout << "MultiDimMenu<Type, ret>::get_hovered() row out of bounds" << std::endl;
       return items[sel_col][sel_row];
     }
   }
-  std::cout << "MultiDimMenu::get_hovered() row out of bounds" << std::endl;
+  std::cout << "MultiDimMenu<Type, ret>::get_hovered() row out of bounds" << std::endl;
   return items[sel_col][sel_row];
 }
 
-singlelist &MultiDimMenu::operator [](int i)
+template
+<typename Type, typename ret>
+list<Type, ret> &MultiDimMenu<Type, ret>::operator [](int i)
 {
   return items[i];
 }
 
-void MultiDimMenu::scroll_up()
+template
+<typename Type, typename ret>
+void MultiDimMenu<Type, ret>::scroll_up()
 {
   sel_row -= 1;
   if(sel_row<0) sel_row = items[sel_col].size()-1;
 }
 
-void MultiDimMenu::scroll_down()
+template
+<typename Type, typename ret>
+void MultiDimMenu<Type, ret>::scroll_down()
 {
   sel_row += 1;
   if(sel_row>=items[sel_col].size()) sel_row = 0;
 }
 
-void MultiDimMenu::scroll_left()
+template
+<typename Type, typename ret>
+void MultiDimMenu<Type, ret>::scroll_left()
 {
   sel_col -= 1;
   if(sel_col<0) sel_col = items.size()-1;
   if(sel_row > items[sel_col].size()) sel_row = items[sel_col].size()-1;
 }
 
-void MultiDimMenu::scroll_right()
+template
+<typename Type, typename ret>
+void MultiDimMenu<Type, ret>::scroll_right()
 {
   sel_col += 1;
   if(sel_col>=items.size()) sel_col = 0;
@@ -266,131 +298,21 @@ void MultiDimMenu::scroll_right()
 }
 
 
+CombatMenu::CombatMenu(combatlist& l1)
+  : MultiDimMenu<bool, void>(l1) {}
+CombatMenu::CombatMenu(combatlist& l1, combatlist& l2)
+  : MultiDimMenu<bool, void>(l1, l2) {}
+CombatMenu::CombatMenu(combatlist& l1, combatlist& l2, combatlist& l3)
+  : MultiDimMenu<bool, void>(l1, l2, l3) {}
+CombatMenu::CombatMenu(combatlist& l1, combatlist& l2, combatlist& l3, combatlist& l4)
+  : MultiDimMenu<bool, void>(l1, l2, l3, l4) {}
 
 
-
-
-/*
-EquipmentMenu::EquipmentMenu(std::function<void(void)> f)
-{
-    curr_menu = 1;
-    m_menus[0] = Menu();
-    m_menus[1] = Menu();
-    m_menus[2] = Menu();
-    menu_func = f;
-}
-
-void EquipmentMenu::AddItemLeft(TextItemOnScroll ti)
-{
-    m_menus[0].AddItem(ti);
-}
-
-void EquipmentMenu::AddItemMiddle(TextItemOnScroll ti)
-{
-    m_menus[1].AddItem(ti);
-}
-
-void EquipmentMenu::AddItemRight(TextItemOnScroll ti)
-{
-    m_menus[2].AddItem(ti);
-}
-// TODO menus need to be cleaned up
-int EquipmentMenu::ScrollUp()
-{
-    curr_selected -= 1;
-    if(curr_selected<0) curr_selected = m_menus[curr_menu].ListSize()-1;
-    return m_menus[curr_menu].list_items[curr_selected].action();
-}
-
-int EquipmentMenu::ScrollDown()
-{
-    curr_selected += 1;
-    if(curr_selected>=m_menus[curr_menu].ListSize()) curr_selected = 0;
-    return m_menus[curr_menu].list_items[curr_selected].action();
-}
-
-int EquipmentMenu::ScrollLeft()
-{
-    curr_menu -= 1;
-    if(curr_menu<0) curr_menu=2;
-    if(m_menus[curr_menu].ListSize() <= curr_selected) curr_selected = m_menus[curr_menu].ListSize()-1;
-    return m_menus[curr_menu].list_items[curr_selected].action();
-}
-
-int EquipmentMenu::ScrollRight()
-{
-    curr_menu = (curr_menu + 1) % 3;
-    if(m_menus[curr_menu].ListSize() <= curr_selected) curr_selected = m_menus[curr_menu].ListSize()-1;
-    return m_menus[curr_menu].list_items[curr_selected].action();
-}
-
-void EquipmentMenu::Select()
-{
-    menu_func();
-}
-
-int EquipmentMenu::CurrentSelected()
-{
-    return m_menus[curr_menu].curr_selected;
-}
-
-CombatMenu::CombatMenu(MenuItem<std::string, void> &a) : Menu()
-{
-  list_items.emplace_back(a);
-}
-
-CombatMenu::CombatMenu(MenuItem<std::string, void> &a, MenuItem<std::string, void> &b) : Menu()
-{
-  list_items.emplace_back(a);
-  list_items.emplace_back(b);
-}
-
-CombatMenu::CombatMenu(MenuItem<std::string, void> &a, MenuItem<std::string, void> &b, MenuItem<std::string, void> &c) : Menu()
-{
-  list_items.emplace_back(a);
-  list_items.emplace_back(b);
-  list_items.emplace_back(c);
-}
-
-CombatMenu::CombatMenu(MenuItem<std::string, void> &a, MenuItem<std::string, void> &b, MenuItem<std::string, void> &c, MenuItem<std::string, void> &d) : Menu()
-{
-  list_items.emplace_back(a);
-  list_items.emplace_back(b);
-  list_items.emplace_back(c);
-  list_items.emplace_back(d);
-}
-
-void CombatMenu::ScrollLeft()
-{
-  curr_selected -= 2;
-  if(curr_selected<0) curr_selected = list_items.size()+curr_selected;
-}
-
-void CombatMenu::ScrollRight()
-{
-  curr_selected += 2;
-  if(curr_selected>=list_items.size()) curr_selected = curr_selected-list_items.size();
-}
-
-TargetMenu::TargetMenu(std::function<void(void)> f)
-{
-  list_items.emplace_back(TextItemOnSelect{"", f});
-}
-
-//TODO clean up
-void TargetMenu::AddTargets(std::vector<entt::entity> &target_view)
-{
-  for(auto ent : target_view)
-  {
-    targets.emplace_back(ent);
-    list_items.emplace_back(list_items[0]);
-  }
-  //BUG need to remove first element due to this being stupid
-  //or clean up and make better
-}
-
-entt::entity TargetMenu::GetSelected()
-{
-  return targets[curr_selected];
-}
-*/
+TargetMenu::TargetMenu(targetlist& l1)
+  : MultiDimMenu<entt::entity, void>(l1) {}
+TargetMenu::TargetMenu(targetlist& l1, targetlist& l2)
+  : MultiDimMenu<entt::entity, void>(l1, l2) {}
+TargetMenu::TargetMenu(targetlist& l1, targetlist& l2, targetlist& l3)
+  : MultiDimMenu<entt::entity, void>(l1, l2, l3) {}
+TargetMenu::TargetMenu(targetlist& l1, targetlist& l2, targetlist& l3, targetlist& l4)
+  : MultiDimMenu<entt::entity, void>(l1, l2, l3, l4) {}
