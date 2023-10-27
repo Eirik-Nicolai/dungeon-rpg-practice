@@ -166,13 +166,28 @@ void DungeonThing::on_load_init()
 
     auto ring = m_reg.create();
     m_reg.emplace<equipment_type>(ring, equiptype::ACCESS_FINGER);
-    m_reg.emplace<visual>(ring, "RING");
+    m_reg.emplace<visual>(ring, "RING1");
     m_reg.emplace<willpower>(ring, 110, 110);
+
+    auto ring1 = m_reg.create();
+    m_reg.emplace<equipment_type>(ring1, equiptype::ACCESS_FINGER);
+    m_reg.emplace<visual>(ring1, "RING2");
+    m_reg.emplace<willpower>(ring1, 110, 110);
+
+    auto ring2 = m_reg.create();
+    m_reg.emplace<equipment_type>(ring2, equiptype::ACCESS_FINGER);
+    m_reg.emplace<visual>(ring2, "RING3");
+    m_reg.emplace<willpower>(ring2, 110, 110);
 
     auto skull = m_reg.create();
     m_reg.emplace<equipment_type>(skull, equiptype::HEAD);
     m_reg.emplace<visual>(skull, "SKULL");
     m_reg.emplace<mind>(skull, 1, 1);
+
+    auto ring3 = m_reg.create();
+    m_reg.emplace<equipment_type>(ring3, equiptype::ACCESS_FINGER);
+    m_reg.emplace<visual>(ring3, "RING4");
+    m_reg.emplace<willpower>(ring3, 110, 110);
 
     auto horns = m_reg.create();
     m_reg.emplace<equipment_type>(horns, equiptype::HEAD);
@@ -180,11 +195,21 @@ void DungeonThing::on_load_init()
     m_reg.emplace<force>(horns, 1, 1);
     m_reg.emplace<armour>(horns, 2, 2);
 
+    auto ring4 = m_reg.create();
+    m_reg.emplace<equipment_type>(ring4, equiptype::ACCESS_FINGER);
+    m_reg.emplace<visual>(ring4, "RING5");
+    m_reg.emplace<willpower>(ring4, 110, 110);
+
     auto &invstate = m_reg.ctx().get<InventoryState>();
-    invstate.equipables[equiptype::HEAD].emplace_back(skull);
-    invstate.equipables[equiptype::HEAD].emplace_back(horns);
-    invstate.equipables[equiptype::LEGS].emplace_back(pants);
     invstate.equipables[equiptype::ACCESS_FINGER].emplace_back(ring);
+    invstate.equipables[equiptype::HEAD].emplace_back(skull);
+    invstate.equipables[equiptype::ACCESS_FINGER].emplace_back(ring1);
+    invstate.equipables[equiptype::HEAD].emplace_back(horns);
+    invstate.equipables[equiptype::ACCESS_FINGER].emplace_back(ring2);
+    invstate.equipables[equiptype::LEGS].emplace_back(pants);
+    invstate.equipables[equiptype::ACCESS_FINGER].emplace_back(ring3);
+    invstate.equipables[equiptype::ACCESS_FINGER].emplace_back(ring4);
+    invstate.equipables[equiptype::LEGS].emplace_back(pants);
 
     // COMBAT
     m_reg.emplace<_ally>(player);
@@ -255,44 +280,44 @@ void DungeonThing::on_load_init()
 
     m_player = player;
 
-    TextItemOnSelect attack{
-        "ATTACK",
-        [=]{
-            NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-            m_intended_action = does_multiple_things_attack;
-        }
-    };
-    TextItemOnSelect skill{
-        "SKILL",
-        [&]{
-            m_curr_menu = 1;
-        }
-    };
-    TextItemOnSelect item{
-        "ITEM",
-        []{
-            std::cout << "EXIT NOT IMPL" << std::endl;
-        }};
-    TextItemOnSelect run {
-        "RUN",
-        [&]{
-            NEXT_STATE = {state::WALKING, type::FROM_COMBAT_TRANSITION};
-            std::cout << "EXIT NOT IMPL" << std::endl;
-        }};
-    m_combatmenus.emplace_back(CombatMenu(attack, skill, item, run));
+    // TextItemOnSelect attack{
+    //     "ATTACK",
+    //     [=]{
+    //         NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+    //         m_intended_action = does_multiple_things_attack;
+    //     }
+    // };
+    // TextItemOnSelect skill{
+    //     "SKILL",
+    //     [&]{
+    //         m_curr_menu = 1;
+    //     }
+    // };
+    // TextItemOnSelect item{
+    //     "ITEM",
+    //     []{
+    //         std::cout << "EXIT NOT IMPL" << std::endl;
+    //     }};
+    // TextItemOnSelect run {
+    //     "RUN",
+    //     [&]{
+    //         NEXT_STATE = {state::WALKING, type::FROM_COMBAT_TRANSITION};
+    //         std::cout << "EXIT NOT IMPL" << std::endl;
+    //     }};
+    // m_combatmenus.emplace_back(CombatMenu(attack, skill, item, run));
 
-    TextItemOnSelect cleanse{
-    "CLEANSE",
-    [=]{
-        NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-        m_intended_action = does_multiple_things_heal;
-    }};
-    TextItemOnSelect back{
-    "BACK",
-    [=]{
-        m_curr_menu = 0;
-    }};
-    m_combatmenus.emplace_back(CombatMenu(cleanse, back));
+    // TextItemOnSelect cleanse{
+    // "CLEANSE",
+    // [=]{
+    //     NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+    //     m_intended_action = does_multiple_things_heal;
+    // }};
+    // TextItemOnSelect back{
+    // "BACK",
+    // [=]{
+    //     m_curr_menu = 0;
+    // }};
+    // m_combatmenus.emplace_back(CombatMenu(cleanse, back));
 
     auto goblin = m_reg.create();
     m_reg.emplace<movespeed>(goblin, 0.6f);

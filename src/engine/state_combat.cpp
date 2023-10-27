@@ -15,7 +15,6 @@ void DungeonThing::STATE_COMBAT(float dt)
             Debugger::instance()+="STATE: INIT";
             // TODO save curr state ?
 
-
             //FIXME needs to actually be loaded in somehow
             auto poison = m_reg.create();
             m_reg.emplace<_debuff>(poison);
@@ -28,11 +27,14 @@ void DungeonThing::STATE_COMBAT(float dt)
             // m_reg.emplace<adds_debuff>(poison_attack, poison);
 
             auto heavy_attack = m_reg.create();
-            m_reg.emplace<visual>(heavy_attack, "HEAVY ATK");
+            m_reg.emplace<visual>(heavy_attack, visual{
+                .name = "HEAVY ATK",
+                });
             m_reg.emplace<damage>(heavy_attack, 40);
             m_reg.emplace<adds_debuff>(heavy_attack, poison);
 
             auto goblin_big = m_reg.create();
+            m_reg.emplace<visual>(goblin_big, "HUGE");
             m_reg.emplace<combat_appearence>(goblin_big, "V");
             m_reg.emplace<health>(goblin_big, 1000, 1000);
             m_reg.emplace<_enemy>(goblin_big);
@@ -81,36 +83,37 @@ void DungeonThing::STATE_COMBAT(float dt)
             //m_reg.emplace_or_replace<force>(m_player, 0, 0);
             //m_reg.emplace_or_replace<mind>(m_player, 0, 0);
             auto goblin_mage = m_reg.create();
+            m_reg.emplace<visual>(goblin_mage, "small");
+            m_reg.emplace<_enemy>(goblin_mage);
             m_reg.emplace<combat_appearence>(goblin_mage, "U");
             m_reg.emplace<health>(goblin_mage, 40, 40);
             m_reg.emplace<armour>(goblin_mage, 1);
             m_reg.emplace<force>(goblin_mage, 0, 0);
             m_reg.emplace<mind>(goblin_mage, 20, 20);
-            m_reg.emplace<_enemy>(goblin_mage);
             m_reg.emplace<affected>(goblin_mage);
 
             // find positions for multi-group enemies/allies
-            auto enemy_group = m_reg.view<_enemy>();
+            //auto enemy_group = m_reg.view<_enemy>();
             auto [winx, winy] = GetWindowSize();
             auto posx_allies = winx * 0.30;
             auto posx_enemy = winx * 0.70;
 
             m_reg.emplace_or_replace<combat::pos>(m_player, (int)posx_allies, winy/3);
+            m_reg.emplace_or_replace<combat::pos>(goblin_mage, (int)posx_enemy, winy/4);
+            m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy*2/4);
 
             // FIXME use the view to calc based on amount of enemies
-            switch (enemy_group.size())
-            {
-                //case 3:
-                    //auto en = *enemy_group.end();
+            // switch (enemy_group.size())
+            // {
+            //     //case 3:
+            //         //auto en = *enemy_group.end();
 
-                case 2:
-                    m_reg.emplace_or_replace<combat::pos>(goblin_mage, (int)posx_enemy, winy/4);
-                    m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy*2/4);
-                    break;
-                case 1:
-                    //m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy/3);
-                    break;
-            }
+            //     case 2:
+            //         break;
+            //     case 1:
+            //         //m_reg.emplace_or_replace<combat::pos>(goblin_big, (int)posx_enemy, winy/3);
+            //         break;
+            // }
 
             //auto goblin_mage = m_reg.create();
             //auto goblin_reg = m_reg.create();
@@ -125,38 +128,131 @@ void DungeonThing::STATE_COMBAT(float dt)
 
             //m_targetmenu.clear();
 
-            m_targetmenu = TargetMenu([&]{
-                auto target = m_targetmenu.GetSelected();
-                if (m_reg.any_of<action_children>(m_intended_action))
-                {
-                    auto children = m_reg.get<action_children>(m_intended_action).children;
-                    for(auto a : children)
-                    {
-                        m_movequeue_player.emplace(combat_action{
-                            .action = a,
-                            .target = target
-                        });
-                    }
-                }
-                else
-                {
-                    m_movequeue_player.emplace(combat_action{
-                        .action = m_intended_action,
-                        .target = target
-                    });
-                }
-                NEXT_STATE.type = type::ALLY_SELECTING_ACTION;
-            });
+
+            MenuItem<entt::entity,void> attack{
+            .info =    "ATTACK",
+            .select_cmd = [&]{
+                //NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+                m_curr_menu = 1;
+            }};
+
+            MenuItem<entt::entity, void> skill{
+            .info =    "SKILL",
+            .select_cmd = [&]{
+                m_curr_menu = 2;
+            }};
+
+            MenuItem<entt::entity,void> item{
+            .info =    "ITEM",
+            .select_cmd = [&]{
+                std::cout << "ITEMS NOT IMPL" << std::endl;
+            }};
+            MenuItem<entt::entity,void> item1{
+            .info =    "ITEM",
+            .select_cmd = [&]{
+                std::cout << "ITEMS NOT IMPL" << std::endl;
+            }};
+            auto col1 = std::vector<MenuItem<entt::entity,void>>{attack,skill};
+            auto col2 = std::vector<MenuItem<entt::entity,void>>{item};
+            m_combat_menus.emplace_back(MultiDimMenu(col1, col2));
+
+            // TODO need to figure out AOE and targeting diff tthings in one action
+            auto hit_hard = m_reg.create();
+            m_reg.emplace<visual>(hit_hard, "superpunch");
+            m_reg.emplace<damage>(hit_hard, 100, dmg_type::PHYSICAL);
+
+            auto superpunch = m_reg.create();
+            m_reg.emplace<cost>(superpunch, 30, cost_type::MANA);
+            m_reg.emplace<visual>(superpunch, "superpunch");
+            m_reg.emplace<action_children>(superpunch, std::vector<entt::entity>{
+                    hit_hard
+                });
+
+            MenuItem<entt::entity,void> at1{
+            .info =    "HEAVY ATTACK",
+            .select_cmd = [=]{
+                m_intended_action = superpunch;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            MenuItem<entt::entity, void> at2{
+            .info =    "BITCH",
+            .select_cmd = [=]{
+                m_intended_action = heavy_attack;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            MenuItem<entt::entity, void> at3{
+            .info =    "CUNT",
+            .select_cmd = [=]{
+                m_intended_action = heavy_attack;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            MenuItem<entt::entity,void> back{
+            .info =    "BACK",
+            .select_cmd = [&]{
+                m_curr_menu = 0;
+            }};
+            auto atkcol1 = std::vector<MenuItem<entt::entity,void>>{at1, at2};
+            auto atkcol2 = std::vector<MenuItem<entt::entity,void>>{at3, back};
+            m_combat_menus.emplace_back(MultiDimMenu(atkcol1, atkcol2));
+
+
+            MenuItem<entt::entity,void> sk1{
+            .info =    "SKILL",
+            .select_cmd = [=]{
+                m_intended_action = heavy_attack;
+                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+            }};
+
+            auto skcol1 = std::vector<MenuItem<entt::entity,void>>{at1};
+            auto skcol2 = std::vector<MenuItem<entt::entity,void>>{back};
+            m_combat_menus.emplace_back(MultiDimMenu(skcol1));
+            m_combat_menus.emplace_back(MultiDimMenu(skcol2));
+
 
             //FIXME clean up
-            auto enemy_targets = m_reg.view<_enemy>();
-            auto ally_targets = m_reg.view<_ally>();
-            std::vector<entt::entity> enemyvec(enemy_targets.begin(), enemy_targets.end());
-            std::vector<entt::entity> allyvec(ally_targets.begin(), ally_targets.end());
-            m_targetmenu.AddTargets(enemyvec);
-            m_targetmenu.AddTargets(allyvec);
+            std::vector<MenuItem<entt::entity, void>> enemyvec;
+            std::vector<MenuItem<entt::entity, void>> allyvec;
 
+            // for(auto [e] : enemies.each())
+            // {
+            // }
+            auto enemies = m_reg.view<_enemy>();
+
+            for(auto [ent] : enemies.each())
+            {   //TODO we don't have arguments for funcs yet so have to copy explicitly
+                auto cent = ent;
+                enemyvec.emplace_back(MenuItem<entt::entity, void>{
+                    .content = cent,
+                    .select_cmd = [=](){
+                        std::cout << get_name(ent) << std::endl;
+                        if (m_reg.any_of<action_children>(m_intended_action))
+                        {
+                            auto children = m_reg.get<action_children>(m_intended_action).children;
+                            for(auto a : children)
+                            {
+                                m_movequeue_player.emplace(combat_action{
+                                    .action = a,
+                                    .target = ent
+                                });
+                            }
+                        }
+                        NEXT_STATE.type = type::ALLY_SELECTING_ACTION;
+                    },
+                    });
+            }
+            // for(auto [ent] : ally_targets.each())
+            // {
+            //     std::cout << get_name(ent) << std::endl;
+            //     allyvec.emplace_back(MenuItem<entt::entity, void>{
+            //         .content = ent,
+            //         .select_cmd = action,
+            //         });
+            // }
             m_reg.ctx().emplace<CombatState>(-1);
+            m_target_menu = MultiDimMenu(enemyvec);
 
             m_transition_progress = 0.0;
             m_elapsed_transition_time = 1.0;

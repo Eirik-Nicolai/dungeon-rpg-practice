@@ -23,12 +23,12 @@ void DungeonThing::on_render_paused()
     int mid_menu_y = winy/2;
 
     //menu text items
-    for(int i = 0; i < m_pausemenus[m_curr_menu].ListSize(); ++i)
+    for(int i = 0; i < m_pause_menu.size(); ++i)
     {
-        DrawString(mid_menu_x - GetStringLength(m_pausemenus[m_curr_menu].list_items[i].text,4)/2,
-                   mid_menu_y + (MENU_ITEM_OFFS_Y*i) - (MENU_ITEM_OFFS_Y*m_pausemenus[m_curr_menu].ListSize()/2),
-                   m_pausemenus[m_curr_menu].list_items[i].text,
-                   m_pausemenus[m_curr_menu].curr_selected==i ? olc::RED : olc::WHITE,
+        DrawString(mid_menu_x - GetStringLength(m_pause_menu[i].content,4)/2,
+                   mid_menu_y + (MENU_ITEM_OFFS_Y*i) - (MENU_ITEM_OFFS_Y*m_pause_menu.size()/2),
+                   m_pause_menu[i].content,
+                   m_pause_menu.is_hovered(i) ? olc::RED : olc::WHITE,
                    4);
     }
 
@@ -296,23 +296,23 @@ void DungeonThing::on_render_paused_inventory()
     auto i = 0;
     //TODO figure out a better way to get
     //current selected inv
-    for(auto e : m_inventory_list)
+    auto current_item_window = m_inventory_menu.get_inner();
+    for(auto item : current_item_window)
     {
-        auto name = get_name(e);
         DrawString(winx_main*0.6,(equipment_win_y*0.2)+offs*i,
-                   PAUSED::OVERVIEW::get_inv_stats_drawn(this, e),
+                   PAUSED::OVERVIEW::get_inv_stats_drawn(this, item.content),
                    olc::WHITE, 3);
-        if(m_inventory_menu.curr_selected == i)
+        if(m_inventory_menu.is_hovered(i))
         {
             DrawString(winx_main*0.1,(equipment_win_y*0.2)+offs*i,
-                       name, olc::RED, 3);
+                       item.info, olc::RED, 3);
             DrawString(winx_main*0.1-GetStringLength("-> ", 3),(equipment_win_y*0.2)+offs*i,
                        "->", olc::WHITE, 3);
         }
         else
         {
             DrawString(winx_main*0.1,(equipment_win_y*0.2)+offs*i,
-                       name, olc::WHITE, 3);
+                       item.info, olc::WHITE, 3);
         }
         ++i;
     }

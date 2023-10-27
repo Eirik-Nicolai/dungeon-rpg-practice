@@ -63,7 +63,6 @@ class DungeonThing : public olc::PixelGameEngine
         entt::registry m_reg;
         void render_windows();
 
-        int m_curr_menu;
 
         State CURR_STATE;
         State NEXT_STATE;
@@ -82,15 +81,16 @@ class DungeonThing : public olc::PixelGameEngine
         std::queue<combat_action> m_movequeue_player;
         std::queue<combat_action> m_movequeue_allies;
         std::queue<combat_action> m_movequeue_enemy;
-        std::vector<CombatMenu> m_combatmenus;
         entt::entity m_intended_action;
-        TargetMenu m_targetmenu;
+        std::vector<MultiDimMenu> m_combat_menus;
+        int m_curr_menu;
+        MultiDimMenu m_target_menu;
 
         // EQUIPMENT AND INVENTORY
-        std::vector<PauseMenu> m_pausemenus;
+        SimpleMenu m_pause_menu;
 
-        EquipmentMenu m_equipment_menu;
-        InventoryMenu m_inventory_menu;
+        //ScrollableMenu m_equipment_menu;
+        ScrollableMenu m_inventory_menu;
         int m_current_selected_equipment_type;
         std::vector<entt::entity> m_inventory_list;
 

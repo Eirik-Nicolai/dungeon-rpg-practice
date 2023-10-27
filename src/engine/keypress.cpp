@@ -64,53 +64,28 @@ void DungeonThing::on_userinput_paused()
         {
             if (GetKey(olc::Key::W).bReleased)
             {
-                m_pausemenus[m_curr_menu].ScrollUp();
+                m_pause_menu.scroll_up();
             }
             if (GetKey(olc::Key::S).bReleased)
             {
-                m_pausemenus[m_curr_menu].ScrollDown();
+                m_pause_menu.scroll_down();
             }
             if(GetKey(olc::Key::ENTER).bReleased)
             {
-                m_pausemenus[m_curr_menu].Select();
+                m_pause_menu.select();
             }
         }
         break;
         case type::EQUIPMENT:
         {
-            if (GetKey(olc::Key::W).bReleased)
-            {
-                m_current_selected_equipment_type = m_equipment_menu.ScrollUp();
-            }
-            if (GetKey(olc::Key::S).bReleased)
-            {
-                m_current_selected_equipment_type = m_equipment_menu.ScrollDown();
-            }
-            if (GetKey(olc::Key::A).bReleased)
-            {
-                m_current_selected_equipment_type = m_equipment_menu.ScrollLeft();
-            }
-            if (GetKey(olc::Key::D).bReleased)
-            {
-                m_current_selected_equipment_type = m_equipment_menu.ScrollRight();
-            }
-            if(GetKey(olc::Key::ENTER).bReleased)
-            {
-                m_equipment_menu.Select();
-            }
-        }
-        break;
-        case ::type::INVENTORY:
-        {
-            if (GetKey(olc::Key::W).bReleased)
-            {
-                m_inventory_menu.ScrollUp();
-            }
-            if (GetKey(olc::Key::S).bReleased)
-            {
-                m_inventory_menu.ScrollDown();
-            }
-            // TODO use to see special effects
+            // if (GetKey(olc::Key::W).bReleased)
+            // {
+            //     m_current_selected_equipment_type = m_equipment_menu.scroll_up();
+            // }
+            // if (GetKey(olc::Key::S).bReleased)
+            // {
+            //     m_current_selected_equipment_type = m_equipment_menu.scroll_down();
+            // }
             // if (GetKey(olc::Key::A).bReleased)
             // {
             //     m_current_selected_equipment_type = m_equipment_menu.ScrollLeft();
@@ -119,9 +94,34 @@ void DungeonThing::on_userinput_paused()
             // {
             //     m_current_selected_equipment_type = m_equipment_menu.ScrollRight();
             // }
+            // if(GetKey(olc::Key::ENTER).bReleased)
+            // {
+            //     m_equipment_menu.select();
+            // }
+        }
+        break;
+        case ::type::INVENTORY:
+        {
+            if (GetKey(olc::Key::W).bReleased)
+            {
+                m_inventory_menu.scroll_up();
+            }
+            if (GetKey(olc::Key::S).bReleased)
+            {
+                m_inventory_menu.scroll_down();
+            }
+            //TODO use to see special effects
+            if (GetKey(olc::Key::A).bReleased)
+            {
+                //m_current_selected_equipment_type = m_equipment_menu.ScrollLeft();
+            }
+            if (GetKey(olc::Key::D).bReleased)
+            {
+                //m_current_selected_equipment_type = m_equipment_menu.ScrollRight();
+            }
             if(GetKey(olc::Key::ENTER).bReleased)
             {
-                m_inventory_menu.Select();
+                m_inventory_menu.select();
             }
         }
         break;
@@ -169,38 +169,46 @@ void DungeonThing::on_userinput_combat()
     {
         if (GetKey(olc::Key::W).bReleased || GetKey(olc::Key::UP).bReleased)
         {
-            m_combatmenus[m_curr_menu].ScrollUp();
+            m_combat_menus[m_curr_menu].scroll_up();
         }
         if (GetKey(olc::Key::S).bReleased || GetKey(olc::Key::DOWN).bReleased)
         {
-            m_combatmenus[m_curr_menu].ScrollDown();
+            m_combat_menus[m_curr_menu].scroll_down();
         }
         if (GetKey(olc::Key::A).bReleased || GetKey(olc::Key::LEFT).bReleased)
         {
-            m_combatmenus[m_curr_menu].ScrollLeft();
+            m_combat_menus[m_curr_menu].scroll_left();
         }
         if (GetKey(olc::Key::D).bReleased || GetKey(olc::Key::RIGHT).bReleased)
         {
-            m_combatmenus[m_curr_menu].ScrollRight();
+            m_combat_menus[m_curr_menu].scroll_right();
         }
         if(GetKey(olc::Key::ENTER).bReleased || GetKey(olc::Key::SPACE).bReleased)
         {
-            m_combatmenus[m_curr_menu].Select();
+            m_combat_menus[m_curr_menu].select();
         }
     }
     else
     {
         if (GetKey(olc::Key::W).bReleased || GetKey(olc::Key::UP).bReleased)
         {
-            m_targetmenu.ScrollDown();
+            m_target_menu.scroll_down();
         }
         if (GetKey(olc::Key::S).bReleased || GetKey(olc::Key::DOWN).bReleased)
         {
-            m_targetmenu.ScrollDown();
+            m_target_menu.scroll_down();
+        }
+        if (GetKey(olc::Key::A).bReleased || GetKey(olc::Key::LEFT).bReleased)
+        {
+            m_target_menu.scroll_left();
+        }
+        if (GetKey(olc::Key::D).bReleased || GetKey(olc::Key::RIGHT).bReleased)
+        {
+            m_target_menu.scroll_right();
         }
         if(GetKey(olc::Key::ENTER).bReleased || GetKey(olc::Key::SPACE).bReleased)
         {
-            m_targetmenu.Select();
+            m_target_menu.select();
         }
     }
 }

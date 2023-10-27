@@ -14,70 +14,71 @@ DungeonThing::DungeonThing()
     m_equip_finger_left = false;
     m_equip_head_left = false;
 
-    TextItemOnSelect resume{
-        "RESUME",
-        [&]{
-            NEXT_STATE.state = state::WALKING;
-            NEXT_STATE.type = type::FREEROAM;
-        }
-    };
-    TextItemOnSelect inventory{
-        "INVENTORY",
-        [&]{
-            m_curr_menu = 1;
-            NEXT_STATE.type = type::INIT_INVENTORY;
-        }
-    };
-    TextItemOnSelect equipment{
-        "EQUIPMENT",
-        [&]{
-            // TODO menu list of equipment types
-            // and then list of currently held items
-            //m_curr_menu = 2;
+    MenuItem<std::string, void> resume{
+    "RESUME",
+    "",
+    [&]{
+        NEXT_STATE.state = state::WALKING;
+        NEXT_STATE.type = type::FREEROAM;
+    }};
+    MenuItem<std::string, void> inventory{
+    "INVENTORY",
+    "",
+    [&]{
+        NEXT_STATE.type = type::INIT_INVENTORY;
+    }};
+    MenuItem<std::string, void> equipment{
+    "EQUIPMENT",
+    "",
+    [&]{
+        // TODO menu list of equipment types
+        // and then list of currently held items
+        //m_curr_menu = 2;
 
-            NEXT_STATE.type = type::EQUIPMENT;
-        }
-    };
-    TextItemOnSelect othershit{
-        "SOME OTHER SHIT",
-        []{
-            std::cout << "SOME SHIT NOT IMPL" << std::endl;
-        }
-    };
-    m_pausemenus.emplace_back(PauseMenu(resume, inventory, equipment, othershit));
+        NEXT_STATE.type = type::EQUIPMENT;
+    }};
+    MenuItem<std::string, void> othershit{
+    "SOME OTHER SHIT",
+    "",
+    []{
+        std::cout << "SOME SHIT NOT IMPL" << std::endl;
+    }};
+    m_pause_menu = SimpleMenu(resume, inventory, equipment, othershit);
 
-    TextItemOnSelect USE{
-        "USE ITEM",
-        [&]{
-            std::cout << "USE ITEM NOT IMPL" << std::endl;
-        }
-    };
-    TextItemOnSelect INSPECT{
-        "INSPECT",
-        [&]{
-            std::cout << "INSPECT NOT IMPL" << std::endl;
-        }
-    };
-    TextItemOnSelect BACK{
-        "BACK",
-        [&]{
-            m_curr_menu = 0;
-            NEXT_STATE.type = type::OVERVIEW;
-        }};
+    MenuItem<std::string, void> USE{
+    "USE ITEM",
+    "",
+    [&]{
+        std::cout << "USE ITEM NOT IMPL" << std::endl;
+    }};
+    MenuItem<std::string, void> INSPECT{
+    "INSPECT",
+    "",
+    [&]{
+        std::cout << "INSPECT NOT IMPL" << std::endl;
+    }};
+    MenuItem<std::string, void> BACK{
+    "BACK",
+    "",
+    [&]{
+        m_curr_menu = 0;
+        NEXT_STATE.type = type::OVERVIEW;
+    }};
 
-    m_pausemenus.emplace_back(PauseMenu(USE, INSPECT, BACK));
-    TextItemOnSelect EQUIP{
-        "EQUIP ITEM",
-        [&]{
-            std::cout << "EQUIP ITEM NOT IMPL" << std::endl;
-        }
-    };
-    TextItemOnSelect INFO{
-        "INFO",
-        [&]{
-            std::cout << "INFO NOT IMPL" << std::endl;
-        }};
-    m_pausemenus.emplace_back(PauseMenu(EQUIP, INFO, BACK));
+    //m_pausemenus.emplace_back(SimpleMenu(USE, INSPECT, BACK));
+    MenuItem<std::string, void> EQUIP{
+    "EQUIP ITEM",
+    "",
+    [&]{
+        std::cout << "EQUIP ITEM NOT IMPL" << std::endl;
+    }};
+    MenuItem<std::string, void> INFO{
+    "INFO",
+    "",
+    [&]{
+        std::cout << "INFO NOT IMPL" << std::endl;
+    }};
+    //m_pausemenus.emplace_back(SimpleMenu(EQUIP, INFO, BACK));
 
 }
 
@@ -85,7 +86,7 @@ bool DungeonThing::OnUserCreate()
 {
     on_load_init();
 
-    CURR_STATE = {GameState::state::COMBAT, GameStateType::type::INIT};
+    CURR_STATE = {state::COMBAT, type::INIT};
     NEXT_STATE = CURR_STATE;
 
     m_fElapsedTimeSinceTick = 0;

@@ -84,9 +84,10 @@ void DungeonThing::on_render_combat()
 
     for(auto [ent]: enemy_view.each())
     {
+
         auto [pos, app, h] = m_reg.get<combat::pos, combat_appearence, health>(ent);
         DrawString(pos.x, pos.y, app.c, olc::WHITE, 4);
-        if(m_targetmenu.GetSelected() == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
+        if(m_target_menu.get_hovered().content == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
             DrawString(pos.x-GetStringLength("-->", 4),pos.y,"-->",olc::WHITE,4);
 
         // HEALTH
@@ -118,7 +119,6 @@ void DungeonThing::on_render_combat()
                 dcol = 1;
                 ++drow;
             }
-
         }
     }
 
@@ -130,24 +130,32 @@ void DungeonThing::on_render_combat()
         DrawString(pos.x, pos.y, app.c, olc::WHITE, 4);
         DrawString(pos.x+GetStringLength("100",4),
                    pos.y, std::to_string(h.curr), olc::RED, 4);
-        if(m_targetmenu.GetSelected() == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
+        if(m_target_menu.get_hovered().content == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
             DrawString(pos.x,pos.y,"<--",olc::WHITE,4);
 
         if(ent == m_player)
             continue;
 
-        // std::cout << "buff" << std::endl;
-        // auto affctd = m_reg.get<affected>(ent);
-        // for(auto dent : affctd.effects)
-        // {
-        //     auto name = get_name(dent);
-        //     std::cout << "buff" << std::endl;
-        //     //auto rounds_left = m_reg.get<tick>(dent).rounds;
-        //     DrawString(pos.x,
-        //                pos.y+GetStringLength("x",2),
-        //                name,
-        //                olc::RED, 2);
-        // }
+        std::cout << "buff" << std::endl;
+        auto affctd = m_reg.get<affected>(ent);
+        for(auto dent : affctd.effects)
+        {
+            olc::Pixel inn = m_reg.all_of<_buff>(ent) ? olc::GREEN : olc::RED;
+            olc::Pixel out = m_reg.all_of<_buff>(ent) ? olc::VERY_DARK_GREEN : olc::VERY_DARK_RED;
+
+            int posx = pos.x+GetStringLength("xx", 4)*dcol;
+            int posy = pos.y-(GetStringLength("x", 4))/3+(GetStringLength("x", 4))*drow;
+            draw_effect_icon(get<visual>(dent).char_repr, posx, posy,
+                             olc::RED, olc::VERY_DARK_RED);
+
+            ++dcol;
+            if(dcol==4)
+            {
+                dcol = 1;
+                ++drow;
+            }
+
+        }
     }
 
     switch (CURR_STATE.type)
@@ -158,27 +166,34 @@ void DungeonThing::on_render_combat()
             // {
             int mid_menu_x[4];
             mid_menu_x[0] = winx*13/20;
-            mid_menu_x[1] = winx*13/20;
-            mid_menu_x[2] = winx*8/10;
-            mid_menu_x[3] = winx*8/10;
+            mid_menu_x[1] = winx*8/10;
+            // mid_menu_x[1] = winx*13/20;
+            // mid_menu_x[3] = winx*8/10;
             // }
             //Debugger::instance()+="Currently selected: " + std::to_string(m_combatmenus[m_curr_menu].curr_selected);
-            for(int i = 0; i < m_combatmenus[m_curr_menu].ListSize(); ++i)
-            {
-                auto col = olc::WHITE;
-                auto slen = (GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text,4));
-                if(m_combatmenus[m_curr_menu].curr_selected == i)
+            for(int c = 0; c < m_combat_menus[m_curr_menu].size(); ++c)
+            {   //TODO this can be cleaned up further
+                int r = 0;
+                bool ticktock = false;
+                for(auto item : m_combat_menus[m_curr_menu][c])
                 {
-                    col = olc::RED;
-                    DrawString(mid_menu_x[i] - GetStringLength("xx", 4) - slen/2, //(GetStringLength(m_combatmenus[m_curr_menu].list_items[i].text,4)),
-                               mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),
-                               "->",
-                               olc::WHITE,4);
+                    auto colour = olc::WHITE;
+                    auto slen = (GetStringLength(item.info,4));
+                    if(m_combat_menus[m_curr_menu].is_hovered(r, c))
+                    {
+                        colour = olc::RED;
+                        DrawString(mid_menu_x[c] - GetStringLength("xx", 4) - slen/2,
+                                   mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * ticktock,
+                                   "->",
+                                   olc::WHITE,4);
+                    }
+                    DrawString(mid_menu_x[c] - slen/2,
+                               mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * ticktock,
+                               item.info,
+                               colour,4);
+                    ticktock = !ticktock;
+                    ++r;
                 }
-                DrawString(mid_menu_x[i] - slen/2,
-                           mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * (i%2),
-                           m_combatmenus[m_curr_menu].list_items[i].text,
-                           col,4);
             }
         }
         break;
