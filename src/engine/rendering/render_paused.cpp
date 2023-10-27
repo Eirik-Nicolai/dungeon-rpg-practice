@@ -162,118 +162,44 @@ void DungeonThing::on_render_paused_overview()
     // EQUIPMENT
     auto equipmentstate = m_reg.ctx().get<EquipmentState>();
 
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.head,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS,
-                   equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS);
+    for(int c = 0; c < 3; ++c)
+    {
+        for (int r = 0; r < 3; ++r)
+        {
+            auto item = m_equipment_menu[c][r];
 
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.torso,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS,
-                   equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS);
+            int x = winx_main*(PAUSED::OVERVIEW::EQUIPMENT_POS_X+(PAUSED::OVERVIEW::EQUIPMENT_POS_X_OFFS*c));
+            int y = equipment_win_y*(PAUSED::OVERVIEW::EQUIPMENT_POS_Y+(PAUSED::OVERVIEW::EQUIPMENT_POS_Y_OFFS*r));
 
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.legs,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS,
-                   equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS);
-
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.main_hand,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS,
-                   equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS);
-
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.off_hand,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS,
-                   equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS);
-
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.jewellery_finger_left,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS,
-                                     equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS);
-
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.jewellery_finger_right,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS,
-                   equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS);
-
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.jewellery_ears,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS,
-                                     equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS);
-
-    PAUSED::OVERVIEW::draw_equipment(this, equipmentstate.jewellery_necklace,
-                   winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS,
-                                     equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS);
+            PAUSED::OVERVIEW::draw_equipment(this, item.content, item.info,x,y);
+        }
+    }
 }
 
 void DungeonThing::on_render_paused_equipment()
 {
     auto [winx, winy] = GetScreenSize();
-
     auto winx_main = winx * PAUSED::OVERVIEW::EQUIPMENT_SIZE_X;
     int equipment_win_y = winy*PAUSED::OVERVIEW::EQUIPMENT_SIZE_Y;
+    auto equipmentstate = m_reg.ctx().get<EquipmentState>();
 
-    //TODO use some time to do this in a cleaner way
-    //there's some method using the index 0-8 along with the dice-face position
-    auto equip = m_reg.ctx().get<EquipmentState>();;
-    entt::entity curr_selected;
-    int x, y;
-
-    //TODO remember to change
-    switch(m_current_selected_equipment_type)
+    for(int c = 0; c < 3; ++c)
     {
-        case equiptype::HEAD:
-            curr_selected = equip.head;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
-            break;
-        case equiptype::TORSO:
-            curr_selected = equip.torso;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS;
-            break;
-        case equiptype::LEGS:
-            curr_selected = equip.legs;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
-            break;
-        case equiptype::MAINHAND:
-            curr_selected = equip.main_hand;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS;
-            break;
-        case equiptype::OFFHAND:
-            curr_selected = equip.off_hand;
-            x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
-            y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_MID_POS;
-            break;
-        case equiptype::ACCESS_HEAD:
-            if(m_equip_head_left)
+        for (int r = 0; r < 3; ++r)
+        {
+            auto item = m_equipment_menu[c][r];
+            if(m_equipment_menu.is_hovered(c, r))
             {
-                curr_selected = equip.jewellery_necklace;
-                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
-                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
+                int x = winx_main*(PAUSED::OVERVIEW::EQUIPMENT_POS_X+(PAUSED::OVERVIEW::EQUIPMENT_POS_X_OFFS*c));
+                int y = equipment_win_y*(PAUSED::OVERVIEW::EQUIPMENT_POS_Y+(PAUSED::OVERVIEW::EQUIPMENT_POS_Y_OFFS*r));
+
+                DrawString(x-(GetStringLength(item.info,3)/2)-GetStringLength("-", 3),y,">", olc::WHITE, 3);
+                DrawString(x+(GetStringLength(item.info,3)/2),y,"<", olc::WHITE, 3);
+                PAUSED::OVERVIEW::draw_equipment(this, item.content, item.info,x,y,
+                                                 olc::RED);
             }
-            else
-            {
-                curr_selected = equip.jewellery_ears;
-                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
-                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_TOP_POS;
-            }
-            break;
-        case equiptype::ACCESS_FINGER:
-            if(m_equip_finger_left)
-            {
-                curr_selected = equip.jewellery_finger_left;
-                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_LEFTLEAN_X_POS;
-                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
-            }
-            else
-            {
-                curr_selected = equip.jewellery_finger_right;
-                x = winx_main*PAUSED::OVERVIEW::EQUIPMENT_RIGHTLEAN_X_POS;
-                y = equipment_win_y*PAUSED::OVERVIEW::EQUIPMENT_Y_BOT_POS;
-            }
-            break;
-        default:
-            throw std::runtime_error("equipment index not recognized");
+        }
     }
-    
-    DrawString(x-GetStringLength(get_name(curr_selected),2)-GetStringLength("--", 3),y,">", olc::WHITE, 3);
-    DrawString(x+GetStringLength(get_name(curr_selected),2)+GetStringLength("-", 3),y,"<", olc::WHITE, 3);
 }
 
 //TODO bigger task
@@ -318,15 +244,14 @@ void DungeonThing::on_render_paused_inventory()
     }
 }
 
-void PAUSED::OVERVIEW::draw_equipment(DungeonThing *olc, entt::entity &ent, int x, int y)
+void PAUSED::OVERVIEW::draw_equipment(DungeonThing *olc, entt::entity &ent,
+                                      std::string &n, int x, int y,
+                                      olc::Pixel c)
 {
     int val_offs = GetStringLength("Willpower: ", 2);
     int init_offs = 10;
     int offs = 20;
-    auto equip = olc->get_name(ent, "---");
-    olc->DrawString(x-GetStringLength(equip, 3)/2, y,
-               equip,
-               olc::WHITE,3);
+    olc->DrawString(x-GetStringLength(n, 3)/2, y, n, c, 3);
 
     x = x-PAUSED::OVERVIEW::EQUIPMENT_MAX_STR_LEN;
     force frce;

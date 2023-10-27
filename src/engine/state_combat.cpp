@@ -22,10 +22,6 @@ void DungeonThing::STATE_COMBAT(float dt)
             m_reg.emplace<damage>(poison, 5);
             m_reg.emplace<tick>(poison, 2);
 
-            // auto poison_attack = m_reg.create();
-            // m_reg.emplace<visual>(poison_attack, "POISON ATTACK");
-            // m_reg.emplace<adds_debuff>(poison_attack, poison);
-
             auto heavy_attack = m_reg.create();
             m_reg.emplace<visual>(heavy_attack, visual{
                 .name = "HEAVY ATK",
@@ -33,64 +29,13 @@ void DungeonThing::STATE_COMBAT(float dt)
             m_reg.emplace<damage>(heavy_attack, 40);
             m_reg.emplace<adds_debuff>(heavy_attack, poison);
 
-            auto goblin_big = m_reg.create();
-            m_reg.emplace<visual>(goblin_big, "HUGE");
-            m_reg.emplace<combat_appearence>(goblin_big, "V");
-            m_reg.emplace<health>(goblin_big, 1000, 1000);
-            m_reg.emplace<_enemy>(goblin_big);
-            //m_reg.emplace<armour>(goblin_big, 5);
-            //m_reg.emplace<force>(goblin_big, 10, 10);
-            //m_reg.emplace<mind>(goblin_big, 0, 0);
+            auto goblin_big = create_enemy("HUGE", "V", 1000);
             m_reg.emplace<has_action>(goblin_big, heavy_attack);
 
-            // m_reg.emplace<armour>(m_player, 0, 0);
-            // m_reg.emplace<willpower>(m_player, 0, 0);
-
-            auto buff1 = m_reg.create();
-            m_reg.emplace<_buff>(buff1);
-            m_reg.emplace<visual>(buff1, "dmg inc", "D", "D");
-            m_reg.emplace<dmg_modifier>(buff1, 1.1, dmg_type::PHYSICAL);
-
-            auto buff2 = m_reg.create();
-            m_reg.emplace<_buff>(buff2);
-            m_reg.emplace<visual>(buff2, "dmg inc", "E", "E");
-            m_reg.emplace<dmg_modifier>(buff2, 1.1, dmg_type::PHYSICAL);
-
-            auto buff3 = m_reg.create();
-            m_reg.emplace<_buff>(buff3);
-            m_reg.emplace<visual>(buff3, "dmg inc", "F", "F");
-            m_reg.emplace<dmg_modifier>(buff3, 1.1, dmg_type::PHYSICAL);
-
-            auto buff4 = m_reg.create();
-            m_reg.emplace<_debuff>(buff4);
-            m_reg.emplace<visual>(buff4, "dmg inc", "A", "GG");
-            m_reg.emplace<dmg_modifier>(buff4, 1.1, dmg_type::PHYSICAL);
-
-            m_reg.patch<affected>(m_player, [&](auto &aff){
-                aff.effects.emplace_back(buff1);
-                aff.effects.emplace_back(buff2);
-                aff.effects.emplace_back(buff3);
-                aff.effects.emplace_back(buff4);
-            });
-            m_reg.emplace<affected>(goblin_big, std::vector<entt::entity>{
-                buff1,
-                poison,
-                buff2,
-                buff3,
-                buff4
-            });
-
-            //m_reg.emplace_or_replace<force>(m_player, 0, 0);
-            //m_reg.emplace_or_replace<mind>(m_player, 0, 0);
-            auto goblin_mage = m_reg.create();
-            m_reg.emplace<visual>(goblin_mage, "small");
-            m_reg.emplace<_enemy>(goblin_mage);
-            m_reg.emplace<combat_appearence>(goblin_mage, "U");
-            m_reg.emplace<health>(goblin_mage, 40, 40);
+            auto goblin_mage = create_enemy("small", "U", 1000);
             m_reg.emplace<armour>(goblin_mage, 1);
             m_reg.emplace<force>(goblin_mage, 0, 0);
             m_reg.emplace<mind>(goblin_mage, 20, 20);
-            m_reg.emplace<affected>(goblin_mage);
 
             // find positions for multi-group enemies/allies
             //auto enemy_group = m_reg.view<_enemy>();
@@ -130,24 +75,29 @@ void DungeonThing::STATE_COMBAT(float dt)
 
 
             MenuItem<bool,void> attack{
+            .content = true,
             .info =    "ATTACK",
             .select_cmd = [&]{
-                //NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
-                m_curr_menu = 1;
+                NEXT_STATE.type = type::LOAD_ACTIONS;
+                m_curr_menu++;
             }};
 
             MenuItem<bool, void> skill{
+            .content = true,
             .info =    "SKILL",
             .select_cmd = [&]{
-                m_curr_menu = 2;
+                NEXT_STATE.type = type::LOAD_ACTIONS;
+                m_curr_menu++;
             }};
 
             MenuItem<bool,void> item{
+            .content = true,
             .info =    "ITEM",
             .select_cmd = [&]{
                 std::cout << "ITEMS NOT IMPL" << std::endl;
             }};
             MenuItem<bool,void> item1{
+            .content = true,
             .info =    "ITEM",
             .select_cmd = [&]{
                 std::cout << "ITEMS NOT IMPL" << std::endl;
@@ -181,16 +131,27 @@ void DungeonThing::STATE_COMBAT(float dt)
                 enemyvec.emplace_back(MenuItem<entt::entity, void>{
                     .content = cent,
                     .select_cmd = [=](){
-                        std::cout << get_name(ent) << std::endl;
+                        on_perform_action_update_resource(m_reg, m_player, m_intended_action);
                         if (m_reg.any_of<action_children>(m_intended_action))
                         {
                             auto children = m_reg.get<action_children>(m_intended_action).children;
                             for(auto a : children)
                             {
-                                m_movequeue_player.emplace(combat_action{
-                                    .action = a,
-                                    .target = ent
-                                });
+                                targets t;
+                                if(!tryget_component(a, t))
+                                {
+                                    m_movequeue_player.emplace(combat_action{
+                                        .action = a,
+                                        .target = ent
+                                    });
+                                }
+                                else
+                                {
+                                    m_movequeue_player.emplace(combat_action{
+                                        .action = a,
+                                        .target = t.who
+                                    });
+                                }
                             }
                         }
                         NEXT_STATE.type = type::ALLY_SELECTING_ACTION;
@@ -229,6 +190,13 @@ void DungeonThing::STATE_COMBAT(float dt)
             on_render_transition_combat(dt);
         }
         break;
+        case type::INIT_COMBAT_ROUND:
+        {
+            Debugger::instance()+="STATE: INIT_COMBAT_ROUND";
+            m_curr_menu = 0;
+            NEXT_STATE.type = type::PLAYER_SELECTING_ACTION;
+        }
+        break;
         case type::PLAYER_SELECTING_ACTION:
         {
             Debugger::instance()+="STATE: PLAYER_SELECTING_ACTION";
@@ -236,26 +204,48 @@ void DungeonThing::STATE_COMBAT(float dt)
             on_render_combat();
         }
         break;
-        case type::INIT_PLAYER_SELECTING_TARGET:
+        // TODO recursive menus, load once and just check mana cost, etc
+        case type::LOAD_ACTIONS:
         {
             // TODO need to figure out AOE and targeting diff tthings in one action
+            auto strong = m_reg.create();
+            m_reg.emplace<_buff>(strong);
+            m_reg.emplace<visual>(strong, "STRONG", "s", "s");
+            m_reg.emplace<dmg_modifier>(strong, 3, dmg_type::PHYSICAL);
+            m_reg.emplace<tick>(strong, 1);
+
+            auto poison = m_reg.create();
+            m_reg.emplace<_debuff>(poison);
+            m_reg.emplace<visual>(poison, "Poison", "bro", "P");
+            m_reg.emplace<damage>(poison, 5);
+            m_reg.emplace<tick>(poison, 2);
+
+            auto get_strong = m_reg.create();
+            m_reg.emplace<visual>(get_strong, "STRONG", "s", "s");
+            m_reg.emplace<targets>(get_strong, m_player);
+            m_reg.emplace<adds_debuff>(get_strong, strong);
+
             auto hit_hard = m_reg.create();
-            m_reg.emplace<visual>(hit_hard, "superpunch");
+            m_reg.emplace<visual>(hit_hard, "STRONG", "s", "s");
             m_reg.emplace<damage>(hit_hard, 100, dmg_type::PHYSICAL);
 
             auto superpunch = m_reg.create();
-            m_reg.emplace<cost>(superpunch, 30, resource_type::MANA);
+            m_reg.emplace<cost>(superpunch, 80, resource_type::MANA);
             m_reg.emplace<visual>(superpunch, "superpunch");
             m_reg.emplace<action_children>(superpunch, std::vector<entt::entity>{
-                    hit_hard
-                });
-
+                get_strong,
+                hit_hard
+            });
+            auto b = has_enough_resources(m_player, superpunch);
             MenuItem<bool,void> at1{
-            .content = has_enough_resources(m_player, superpunch),
+            .content = b,
             .info =    "HEAVY ATTACK",
             .select_cmd = [=]{
-                m_intended_action = superpunch;
-                NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+                if(b)
+                {
+                    m_intended_action = superpunch;
+                    NEXT_STATE.type = type::INIT_PLAYER_SELECTING_TARGET;
+                }
             }};
 
             MenuItem<bool, void> at2{
@@ -278,12 +268,17 @@ void DungeonThing::STATE_COMBAT(float dt)
             .content = true,
             .info =    "BACK",
             .select_cmd = [&]{
-                m_curr_menu = 0;
+                --m_curr_menu;
             }};
             auto atkcol1 = std::vector<MenuItem<bool,void>>{at1, at2};
             auto atkcol2 = std::vector<MenuItem<bool,void>>{at3, back};
 
-            m_combat_menus[1] = CombatMenu(atkcol1);
+            m_combat_menus[1] = CombatMenu(atkcol1, atkcol2);
+            NEXT_STATE.type = type::PLAYER_SELECTING_ACTION;
+        }
+        break;
+        case type::INIT_PLAYER_SELECTING_TARGET:
+        {
 
             NEXT_STATE.type = type::PLAYER_SELECTING_TARGET;
 
@@ -392,7 +387,7 @@ void DungeonThing::STATE_COMBAT(float dt)
             Debugger::instance()+="STATE: PERFORMING_BUFF_DEBUFF_ACTIONS_ENEMY";
             auto enemy = m_reg.view<_enemy>();
             on_buff_debuff_enemy(m_reg, enemy);
-            NEXT_STATE.type = type::PLAYER_SELECTING_ACTION;
+            NEXT_STATE.type = type::INIT_COMBAT_ROUND;
         }
         break;
         default:

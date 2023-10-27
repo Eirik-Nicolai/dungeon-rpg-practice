@@ -8,19 +8,15 @@ struct simple_appearence{
     std::string c;
 };
 
-struct combat_appearence{
-    std::string c;
-};
-
 struct boss_appearence{
     std::string c;
 };
 
 struct visual{
     std::string name;
-    std::string desc;
     std::string char_repr;
-    short colour;
+    std::string desc;
+   short colour; // TODO fix
 };
 
 #endif // RENDERING_H_

@@ -128,7 +128,7 @@ class MultiDimMenu : Menu
     void select() override;
     int size() override;
     bool is_hovered(int) override;
-    virtual bool is_hovered(int,int);
+    virtual bool is_hovered(int c, int r);
 
     virtual MenuItem<Type, ret> get_hovered();
 
@@ -160,6 +160,16 @@ class TargetMenu : public MultiDimMenu<entt::entity, void>
     TargetMenu(list &, list &);
     TargetMenu(list &, list &, list &);
     TargetMenu(list &, list &, list &, list &);
+};
+
+
+class EquipmentMenu : public MultiDimMenu<entt::entity, void>
+{
+  using item = MenuItem<entt::entity, void>;
+  using list = std::vector<item>;
+  public:
+    EquipmentMenu() = default;
+    EquipmentMenu(list &, list &, list &);
 };
 
 #endif // MENU_H_

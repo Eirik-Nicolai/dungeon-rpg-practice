@@ -9,7 +9,6 @@ void on_buff_debuff(entt::registry &reg)
 // we just keep it simple for now
 void on_debuff_gone(entt::registry &reg, entt::entity &owner, entt::entity &debuff)
 {
-    std::cout << "removeing debuff" << std::endl;
     if(reg.all_of<force_modifier>(debuff))
     {
         auto mod = reg.get<force_modifier>(debuff).amount;

@@ -78,26 +78,26 @@ void DungeonThing::on_userinput_paused()
         break;
         case type::EQUIPMENT:
         {
-            // if (GetKey(olc::Key::W).bReleased)
-            // {
-            //     m_current_selected_equipment_type = m_equipment_menu.scroll_up();
-            // }
-            // if (GetKey(olc::Key::S).bReleased)
-            // {
-            //     m_current_selected_equipment_type = m_equipment_menu.scroll_down();
-            // }
-            // if (GetKey(olc::Key::A).bReleased)
-            // {
-            //     m_current_selected_equipment_type = m_equipment_menu.ScrollLeft();
-            // }
-            // if (GetKey(olc::Key::D).bReleased)
-            // {
-            //     m_current_selected_equipment_type = m_equipment_menu.ScrollRight();
-            // }
-            // if(GetKey(olc::Key::ENTER).bReleased)
-            // {
-            //     m_equipment_menu.select();
-            // }
+            if (GetKey(olc::Key::W).bReleased)
+            {
+                m_equipment_menu.scroll_up();
+            }
+            if (GetKey(olc::Key::S).bReleased)
+            {
+                m_equipment_menu.scroll_down();
+            }
+            if (GetKey(olc::Key::A).bReleased)
+            {
+                m_equipment_menu.scroll_left();
+            }
+            if (GetKey(olc::Key::D).bReleased)
+            {
+                m_equipment_menu.scroll_right();
+            }
+            if(GetKey(olc::Key::ENTER).bReleased)
+            {
+                m_equipment_menu.select();
+            }
         }
         break;
         case ::type::INVENTORY:

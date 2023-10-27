@@ -70,6 +70,10 @@ struct action_children{
     std::vector<entt::entity> children;
 };
 
+struct targets{
+    entt::entity who;
+};
+
 struct _debuff{};
 struct _buff{};
 

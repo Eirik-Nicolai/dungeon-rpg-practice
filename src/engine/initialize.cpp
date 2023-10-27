@@ -157,8 +157,8 @@ void DungeonThing::on_load_init()
     state.legs = legs;
     state.main_hand = mainhand;
     state.off_hand = offhand;
-    state.jewellery_ears = ear;
-    state.jewellery_finger_left = finger;
+    state.ears = ear;
+    state.finger_left = finger;
 
     auto pants = m_reg.create();
     m_reg.emplace<equipment_type>(pants, equiptype::LEGS);
@@ -213,7 +213,10 @@ void DungeonThing::on_load_init()
 
     // COMBAT
     m_reg.emplace<_ally>(player);
-    m_reg.emplace<combat_appearence>(player, "#");
+    m_reg.emplace<visual>(player, visual{
+        .name = "Eirik",
+        .char_repr = "#"
+    });
     m_reg.emplace<health>(player, 100, 100);
     m_reg.emplace<mana>(player, 100, 100);
     m_reg.emplace<armour>(player, 0, 0);

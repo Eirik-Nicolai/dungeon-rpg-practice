@@ -10,64 +10,113 @@ void DungeonThing::STATE_PAUSE(float dt)
         {
             Debugger::instance()+="STATE: INIT_PAUSED";
             // TODO save curr state ?
-
+            using equipmentitem = MenuItem<entt::entity, void>;
             auto equipment = m_reg.ctx().get<EquipmentState>();
+            std::vector<equipmentitem> equipment_l;
+            std::vector<equipmentitem> equipment_m;
+            std::vector<equipmentitem> equipment_r;
 
-            // TODO accessories can be equiped multiple places
-            // figure out a way to implement this
-            // m_equipment_menu = EquipmentMenu([&]{
-            //     NEXT_STATE.type = type::ITEM_SELECTED;
-            // });
-            // m_equipment_menu.AddItemLeft(TextItemOnScroll{
-            //     get_name(equipment.jewellery_necklace, "No necklace"),
-            //     [&](){
-            //         m_equip_head_left = true;
-            //         return equiptype::ACCESS_HEAD;
 
-            //     }});
-            // m_equipment_menu.AddItemLeft(TextItemOnScroll{
-            //     get_name(equipment.main_hand, "No main hand"),
-            //     [&](){
-            //         return equiptype::MAINHAND;
-            //     }});
-            // m_equipment_menu.AddItemLeft(TextItemOnScroll{
-            //     get_name(equipment.jewellery_finger_left, "No left finger"),
-            //     [&](){
-            //         m_equip_finger_left = true;
-            //         return equiptype::ACCESS_FINGER;
-            //     }});
-            // m_equipment_menu.AddItemMiddle(TextItemOnScroll{
-            //     get_name(equipment.head, "No headpiece"),
-            //     [&](){
-            //         return equiptype::HEAD;
-            //     }});
-            // m_equipment_menu.AddItemMiddle(TextItemOnScroll{
-            //     get_name(equipment.torso, "No torso"),
-            //     [&](){
-            //         return  equiptype::TORSO;
-            //     }});
-            // m_equipment_menu.AddItemMiddle(TextItemOnScroll{
-            //     get_name(equipment.legs, "No trousers"),
-            //     [&](){
-            //         return  equiptype::LEGS;
-            //     }});
-            // m_equipment_menu.AddItemRight(TextItemOnScroll{
-            //     get_name(equipment.jewellery_ears, "No ear piece"),
-            //     [&](){
-            //         m_equip_head_left = false;
-            //         return  equiptype::ACCESS_HEAD;
-            //     }});
-            // m_equipment_menu.AddItemRight(TextItemOnScroll{
-            //     get_name(equipment.off_hand, "No offhand"),
-            //     [&](){
-            //         return  equiptype::OFFHAND;
-            //     }});
-            // m_equipment_menu.AddItemLeft(TextItemOnScroll{
-            //     get_name(equipment.jewellery_finger_right, "No right finger"),
-            //     [&](){
-            //         m_equip_finger_left = false;
-            //         return equiptype::ACCESS_FINGER;
-            //     }});
+            equipment_l.emplace_back(equipmentitem{
+                .content = equipment.necklace,
+                .info = get_name(equipment.necklace, "No necklace"),
+                .select_cmd = [=](){
+                    //return equipment.necklace;
+                },
+                .scroll_cmd = [=](){
+                    m_equip_head_left = true;
+                    //return equipment.necklace;
+
+                },
+            });
+            equipment_l.emplace_back(equipmentitem{
+                .content = equipment.main_hand,
+                .info = get_name(equipment.main_hand, "No main hand"),
+                .select_cmd = [=](){
+                    //return equipment.main_hand;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.main_hand;
+                },
+            });
+            equipment_l.emplace_back(equipmentitem{
+                .content = equipment.finger_left,
+                .info = get_name(equipment.finger_left, "No left finger"),
+                .select_cmd = [=](){
+                    //return equipment.finger_left;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.finger_left;
+                },
+            });
+            equipment_m.emplace_back(equipmentitem{
+                .content = equipment.head,
+                .info = get_name(equipment.head, "No headpiece"),
+                .select_cmd = [=](){
+                    //return equipment.head;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.head;
+
+                },
+            });
+            equipment_m.emplace_back(equipmentitem{
+                .content = equipment.torso,
+                .info = get_name(equipment.torso, "No torso"),
+                .select_cmd = [=](){
+                    //return equipment.head;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.head;
+
+                },
+            });
+            equipment_m.emplace_back(equipmentitem{
+                .content = equipment.legs,
+                .info = get_name(equipment.legs, "No legs"),
+                .select_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+
+                },
+            });
+            equipment_r.emplace_back(equipmentitem{
+                .content = equipment.ears,
+                .info = get_name(equipment.ears, "No earring"),
+                .select_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+
+                },
+            });
+            equipment_r.emplace_back(equipmentitem{
+                .content = equipment.off_hand,
+                .info = get_name(equipment.off_hand, "No offhand"),
+                .select_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+
+                },
+            });
+            equipment_r.emplace_back(equipmentitem{
+                .content = equipment.finger_right,
+                .info = get_name(equipment.finger_right, "No right finger"),
+                .select_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+                },
+                .scroll_cmd = [=](){
+                    //return equipment.jewellery_necklace;
+
+                },
+            });
+            m_equipment_menu = EquipmentMenu(equipment_l, equipment_m, equipment_r);
+            std::cout << "loading things" << std::endl;
 
             m_transition_progress = 0.0;
             m_elapsed_transition_time = 0.0f;
@@ -95,7 +144,11 @@ void DungeonThing::STATE_PAUSE(float dt)
                         MenuItem<entt::entity, entt::entity>{
                         .content = item,
                         .info = get<visual>(item).name,
-                        .select_cmd = [&](){
+                        .select_cmd = [=](){
+                            // TODO do something with item or w/e
+                            return item;
+                        },
+                        .scroll_cmd = [=](){
                             // TODO do something with item or w/e
                             return item;
                         },
@@ -137,7 +190,7 @@ void DungeonThing::STATE_PAUSE(float dt)
         {
             Debugger::instance()+="STATE: ITEM_SELECTED";
             auto inv = m_reg.ctx().get<InventoryState>();
-            m_inventory_list = inv.equipables[m_current_selected_equipment_type];
+            // m_inventory_list = inv.equipables[m_current_selected_equipment_type];
             // m_inventory_menu = InventoryMenu();
             // for(auto e : m_inventory_list)
             // {
@@ -156,7 +209,7 @@ void DungeonThing::STATE_PAUSE(float dt)
         {
             //std::cout << "equipent" << std::endl;
             Debugger::instance()+="STATE: EQUIPMENT";
-            Debugger::instance()+="selected: " + std::to_string(m_current_selected_equipment_type);
+            // Debugger::instance()+="selected: " + std::to_string(m_current_selected_equipment_type);
             on_userinput_paused();
             on_render_paused();
         }

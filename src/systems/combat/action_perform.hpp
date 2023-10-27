@@ -33,4 +33,6 @@ void apply_buff(entt::registry&, entt::entity&, entt::entity&);
 
 float get_raw_dmg_multiplier(entt::registry&, entt::entity&, dmg_type);
 
+void on_perform_action_update_resource(entt::registry &, entt::entity &, entt::entity &);
+
 #endif // DAMAGE_H_

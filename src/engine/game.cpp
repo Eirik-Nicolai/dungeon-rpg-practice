@@ -10,7 +10,6 @@ DungeonThing::DungeonThing()
     m_transition_acc = 5;
     m_elapsed_transition_time = 1;
 
-    m_current_selected_equipment_type = 0;
     m_equip_finger_left = false;
     m_equip_head_left = false;
 
@@ -86,7 +85,7 @@ bool DungeonThing::OnUserCreate()
 {
     on_load_init();
 
-    CURR_STATE = {state::COMBAT, type::INIT};
+    CURR_STATE = {state::PAUSED, type::INIT_PAUSED};
     NEXT_STATE = CURR_STATE;
 
     m_fElapsedTimeSinceTick = 0;
@@ -175,15 +174,15 @@ void DungeonThing::set_equipment(const entt::entity &e)
             break;
         case equiptype::ACCESS_FINGER:
             if(m_equip_finger_left)
-                equipment.jewellery_finger_left = e;
+                equipment.finger_left = e;
             else
-                equipment.jewellery_finger_right = e;
+                equipment.finger_right = e;
             break;
         case equiptype::ACCESS_HEAD:
             if(m_equip_head_left)
-                equipment.jewellery_finger_right = e;
+                equipment.finger_right = e;
             else
-                equipment.jewellery_finger_right = e;
+                equipment.finger_right = e;
             break;
         default:
             throw std::runtime_error("equipment indx not recognised");
@@ -219,7 +218,6 @@ bool DungeonThing::has_enough_resources(entt::entity &actor, entt::entity &actio
                 {
                     return m.curr >= c.amount;
                 }
-                std::cout << "ACTOR DOESN¨T HAVE MANA FOR ACTION" << std::endl;
                 return false;
             }
             break;
@@ -240,4 +238,32 @@ bool DungeonThing::has_enough_resources(entt::entity &actor, entt::entity &actio
     }
     // no cost
     return true;
+}
+
+
+//// HELPER FUNCTIONS /////
+
+entt::entity DungeonThing::create_enemy(std::string name, std::string c, int h)
+{
+    auto ent = m_reg.create();
+    m_reg.emplace<_enemy>(ent);
+    m_reg.emplace<visual>(ent,visual{
+        .name = name,
+        .char_repr = c,
+    });
+    m_reg.emplace<health>(ent, h, h);
+    m_reg.emplace<affected>(ent);
+    return ent;
+}
+entt::entity DungeonThing::create_ally(std::string name, std::string c, int h)
+{
+    auto ent = m_reg.create();
+    m_reg.emplace<_ally>(ent);
+    m_reg.emplace<visual>(ent,visual{
+        .name = name,
+        .char_repr = c,
+    });
+    m_reg.emplace<health>(ent, h, h);
+    m_reg.emplace<affected>(ent);
+    return ent;
 }

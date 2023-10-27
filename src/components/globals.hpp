@@ -36,10 +36,10 @@ struct EquipmentState{
     entt::entity legs;
     entt::entity main_hand;
     entt::entity off_hand;
-    entt::entity jewellery_finger_left;
-    entt::entity jewellery_finger_right;
-    entt::entity jewellery_ears;
-    entt::entity jewellery_necklace;
+    entt::entity finger_left;
+    entt::entity finger_right;
+    entt::entity ears;
+    entt::entity necklace;
 };
 
 //FIXME maybe move movequeue to here

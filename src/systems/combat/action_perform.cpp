@@ -4,7 +4,6 @@
 
 void on_perform_action(entt::registry &reg, entt::entity &actor, entt::entity &target, entt::entity &action)
 {
-
     //std::cout << "target" << std::endl;
     if(reg.all_of<damage>(action))
     {
@@ -182,5 +181,38 @@ void on_skill_summon(entt::registry &reg, entt::entity &actor, entt::entity &tar
 
 void on_check_target_death(entt::registry &reg, entt::entity &actor, entt::entity &target)
 {
+
+}
+
+
+void on_perform_action_update_resource(entt::registry &reg, entt::entity &actor, entt::entity &action)
+{
+    if(reg.all_of<cost>(action))
+    {
+        auto c = reg.get<cost>(action);
+        switch(c.type)
+        {
+            case resource_type::MANA:
+            {
+                if(reg.all_of<mana>(actor))
+                {
+                    auto &m = reg.get<mana>(actor);
+                    m.curr -= c.amount;
+                }
+            }
+            break;
+            case resource_type::HEALTH:
+            {
+                if(reg.all_of<health>(actor))
+                {
+                    auto &h = reg.get<health>(actor);
+                    h.curr -= c.amount;
+                }
+            }
+            break;
+            default:
+                std::cout << "RESOURCE TYPE NOT IMPL" << std::endl;
+        }
+    }
 
 }

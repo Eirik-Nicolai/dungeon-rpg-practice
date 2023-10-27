@@ -20,19 +20,17 @@ namespace PAUSED
 {
     namespace OVERVIEW
     {
-        constexpr float EQUIPMENT_X_POS = 0.5;
-        constexpr float EQUIPMENT_LEFTLEAN_X_POS = 0.2;
-        constexpr float EQUIPMENT_RIGHTLEAN_X_POS = 0.80;
-        constexpr float EQUIPMENT_Y_TOP_POS = 0.1;
-        constexpr float EQUIPMENT_Y_MID_POS = 0.40;
-        constexpr float EQUIPMENT_Y_BOT_POS = 0.70;
+        constexpr float EQUIPMENT_POS_X = 0.2;
+        constexpr float EQUIPMENT_POS_X_OFFS = 0.3;
+        constexpr float EQUIPMENT_POS_Y = 0.1;
+        constexpr float EQUIPMENT_POS_Y_OFFS = 0.30;
 
         constexpr float EQUIPMENT_SIZE_X = 0.65;
         constexpr float EQUIPMENT_SIZE_Y = 0.66;
 
         constexpr int EQUIPMENT_MAX_STR_LEN = 10*16;
 
-        void draw_equipment(DungeonThing*, entt::entity&, int x, int y);
+        void draw_equipment(DungeonThing*, entt::entity&, std::string&, int x, int y, olc::Pixel c = olc::WHITE);
         std::string get_inv_stats_drawn(DungeonThing*, entt::entity&);
     }
 }

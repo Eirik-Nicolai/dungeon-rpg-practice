@@ -25,7 +25,7 @@ void DungeonThing::on_render_combat()
 
     spaces = play_m.max%100==0 ? "   " : "    ";
     DrawString(winx*0.05, winy_main+winy_combat*0.55,
-               "MANA:  " + std::to_string(play_m.curr) + "" + std::to_string(play_m.max),
+               "MANA:  " + std::to_string(play_m.curr) + "/" + std::to_string(play_m.max),
                olc::WHITE,
                3);
 
@@ -52,10 +52,8 @@ void DungeonThing::on_render_combat()
         {
             int posx = winx*0.3 + GetStringLength("xxxx", 2)*bcol;
             int posy = (winy_main+winy_combat*0.15)+GetStringLength("xx", 2)*brow;
-
             draw_effect_icon(get<visual>(ent).char_repr, posx, posy,
                              olc::GREEN, olc::VERY_DARK_GREEN);
-
             ++bcol;
             if(bcol==3)
             {
@@ -85,8 +83,8 @@ void DungeonThing::on_render_combat()
     for(auto [ent]: enemy_view.each())
     {
 
-        auto [pos, app, h] = m_reg.get<combat::pos, combat_appearence, health>(ent);
-        DrawString(pos.x, pos.y, app.c, olc::WHITE, 4);
+        auto [pos, v, h] = m_reg.get<combat::pos, visual, health>(ent);
+        DrawString(pos.x, pos.y, v.char_repr, olc::WHITE, 4);
         if(m_target_menu.get_hovered().content == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
             DrawString(pos.x-GetStringLength("-->", 4),pos.y,"-->",olc::WHITE,4);
 
@@ -126,8 +124,8 @@ void DungeonThing::on_render_combat()
 
     for(auto [ent]: ally_view.each())
     {
-        auto [pos, app, h] = m_reg.get<combat::pos, combat_appearence, health>(ent);
-        DrawString(pos.x, pos.y, app.c, olc::WHITE, 4);
+        auto [pos, v, h] = m_reg.get<combat::pos, visual, health>(ent);
+        DrawString(pos.x, pos.y, v.char_repr, olc::WHITE, 4);
         DrawString(pos.x+GetStringLength("100",4),
                    pos.y, std::to_string(h.curr), olc::RED, 4);
         if(m_target_menu.get_hovered().content == ent && CURR_STATE.type == type::PLAYER_SELECTING_TARGET)
@@ -154,7 +152,6 @@ void DungeonThing::on_render_combat()
                 dcol = 1;
                 ++drow;
             }
-
         }
     }
 
@@ -186,6 +183,10 @@ void DungeonThing::on_render_combat()
                                    mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * ticktock,
                                    "->",
                                    olc::WHITE,4);
+                    }
+                    if(!item.content) // can we use this option
+                    {
+                        colour = olc::DARK_GREY;
                     }
                     DrawString(mid_menu_x[c] - slen/2,
                                mid_menu_y - (MENU_ITEM_OFFS_Y*1.5/2) + (MENU_ITEM_OFFS_Y*1.5) * ticktock,

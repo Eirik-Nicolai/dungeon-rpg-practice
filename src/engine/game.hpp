@@ -89,9 +89,9 @@ class DungeonThing : public olc::PixelGameEngine
         // EQUIPMENT AND INVENTORY
         SimpleMenu m_pause_menu;
 
-        //ScrollableMenu m_equipment_menu;
+        EquipmentMenu m_equipment_menu;
         ScrollableMenu m_inventory_menu;
-        int m_current_selected_equipment_type;
+        entt::entity m_curr_equip;
         std::vector<entt::entity> m_inventory_list;
 
     public:
@@ -152,6 +152,10 @@ class DungeonThing : public olc::PixelGameEngine
         {
             return m_reg.get<component>(e);
         }
+
+    private: //DEBUGGING HELPER FUNCTIONS
+        entt::entity create_enemy(std::string, std::string, int);
+        entt::entity create_ally(std::string, std::string, int);
 };
 
 

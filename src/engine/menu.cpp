@@ -169,8 +169,6 @@ void ScrollableMenu::scroll_down()
 template
 <typename Type, typename ret>
 using list = std::vector<MenuItem<Type, ret>>;
-using targetlist = list<entt::entity, void>;
-using combatlist = list<bool, void>;
 
 template
 <typename Type, typename ret>
@@ -231,7 +229,7 @@ bool MultiDimMenu<Type, ret>::is_hovered(int r)
 
 template
 <typename Type, typename ret>
-bool MultiDimMenu<Type, ret>::is_hovered(int r, int c)
+bool MultiDimMenu<Type, ret>::is_hovered(int c, int r)
 {
   return sel_row==r && sel_col == c;
 }
@@ -285,7 +283,7 @@ void MultiDimMenu<Type, ret>::scroll_left()
 {
   sel_col -= 1;
   if(sel_col<0) sel_col = items.size()-1;
-  if(sel_row > items[sel_col].size()) sel_row = items[sel_col].size()-1;
+  if(sel_row >= items[sel_col].size()) sel_row = items[sel_col].size()-1;
 }
 
 template
@@ -294,8 +292,12 @@ void MultiDimMenu<Type, ret>::scroll_right()
 {
   sel_col += 1;
   if(sel_col>=items.size()) sel_col = 0;
-  if(sel_row > items[sel_col].size()) sel_row = items[sel_col].size()-1;
+  if(sel_row >= items[sel_col].size()) sel_row = items[sel_col].size()-1;
 }
+
+using combatlist = list<bool, void>;
+using targetlist = list<entt::entity, void>;
+using equipmentlist = list<entt::entity, void>;
 
 
 CombatMenu::CombatMenu(combatlist& l1)
@@ -316,3 +318,7 @@ TargetMenu::TargetMenu(targetlist& l1, targetlist& l2, targetlist& l3)
   : MultiDimMenu<entt::entity, void>(l1, l2, l3) {}
 TargetMenu::TargetMenu(targetlist& l1, targetlist& l2, targetlist& l3, targetlist& l4)
   : MultiDimMenu<entt::entity, void>(l1, l2, l3, l4) {}
+
+
+EquipmentMenu::EquipmentMenu(equipmentlist& l1, equipmentlist& l2, equipmentlist& l3)
+  : MultiDimMenu<entt::entity, void>(l1, l2, l3) {}
